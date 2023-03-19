@@ -1,0 +1,191 @@
+[
+    {
+        "name": "Staff",
+        "cost": 100,
+        "accuracy": "[WLP + WLP]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Arcane"
+    },
+    {
+        "name": "Tome",
+        "cost": 100,
+        "accuracy": "[INS + INS]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Arcane"
+    },
+    {
+        "name": "Crossbow",
+        "cost": 150,
+        "accuracy": "[DEX + INS]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "ranged",
+        "category": "Bow"
+    },
+    {
+        "name": "Shortbow",
+        "cost": 200,
+        "accuracy": "[DEX + DEX]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "ranged",
+        "category": "Bow"
+    },
+    {
+        "name": "Unarmed Strike",
+        "cost": 0,
+        "accuracy": "[DEX + MIG]",
+        "damage": "physical",
+        "quality": "Automatically equipped in each empty hand slot.",
+        "reach": "melee",
+        "category": "Brawling"
+    },
+    {
+        "name": "Improvised (Melee)",
+        "cost": 0,
+        "accuracy": "[DEX + MIG]",
+        "damage": "physical",
+        "quality": "Breaks after the attack.",
+        "reach": "melee",
+        "category": "Brawling"
+    },
+    {
+        "name": "Iron Knuckle",
+        "cost": 150,
+        "accuracy": "[DEX + MIG]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Brawling"
+    },
+    {
+        "name": "Steel Dagger",
+        "cost": 150,
+        "accuracy": "[DEX + INS]+1",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Dagger"
+    },
+    {
+        "name": "Pistol",
+        "cost": 250,
+        "accuracy": "[DEX + INS]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "ranged",
+        "category": "Firearm"
+    },
+    {
+        "name": "Chain Whip",
+        "cost": 150,
+        "accuracy": "[DEX + DEX]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Flail"
+    },
+    {
+        "name": "Iron Hammer",
+        "cost": 200,
+        "accuracy": "[MIG + MIG]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Heavy"
+    },
+    {
+        "name": "Broadaxe",
+        "cost": 250,
+        "accuracy": "[MIG + MIG]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Heavy"
+    },
+    {
+        "name": "Waraxe",
+        "cost": 250,
+        "accuracy": "[MIG + MIG]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Heavy"
+    },
+    {
+        "name": "Light Spear",
+        "cost": 200,
+        "accuracy": "[DEX + MIG]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Spear"
+    },
+    {
+        "name": "Heavy Spear",
+        "cost": 200,
+        "accuracy": "[DEX + MIG]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Spear"
+    },
+    {
+        "name": "Bronze Sword",
+        "cost": 200,
+        "accuracy": "[DEX + MIG]+1",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Sword"
+    },
+    {
+        "name": "Greatsword",
+        "cost": 200,
+        "accuracy": "[DEX + MIG]+1",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Sword"
+    },
+    {
+        "name": "Katana",
+        "cost": 200,
+        "accuracy": "[DEX + INS]+1",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Sword"
+    },
+    {
+        "name": "Rapier",
+        "cost": 200,
+        "accuracy": "[DEX + INS]+1",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "melee",
+        "category": "Sword"
+    },
+    {
+        "name": "Improvised (Ranged)",
+        "cost": 0,
+        "accuracy": "[DEX + MIG]",
+        "damage": "physical",
+        "quality": "Breaks after the attack",
+        "reach": "ranged",
+        "category": "Thrown"
+    },
+    {
+        "name": "Shuriken",
+        "cost": 150,
+        "accuracy": "[DEX + INS]",
+        "damage": "physical",
+        "quality": "No Quality",
+        "reach": "ranged",
+        "category": "Thrown"
+    }
+]

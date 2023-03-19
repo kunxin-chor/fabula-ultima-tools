@@ -1,0 +1,29 @@
+[
+    {
+      "name": "fire"
+    },
+    {
+      "name": "ice"
+    },
+    {
+      "name": "dark"
+    },
+    {
+      "name": "light"
+    },
+    {
+      "name": "bolt"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "earth"
+    },
+    {
+      "name": "poison"
+    },
+    {
+      "name": "physical"
+    }
+  ]
