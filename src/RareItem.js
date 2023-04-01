@@ -76,10 +76,18 @@ const CreateRareItem = () => {
 
         // Modify the damage based on the increaseDamageBonus checkbox
         let damage = selectedBaseItem.damage;
+        let damageValue = parseInt(damage.match(/\d+/)[0], 10);
         if (formValues.modifiers.damageIncrease) {
-            const damageValue = parseInt(damage.match(/\d+/)[0], 10) + 4;
-            damage = damage.replace(/\d+/, damageValue.toString());
+           damageValue += 4;           
         }
+        if (formValues.modifiers.twoHanded) {
+            damageValue += 4;
+        } 
+        if (formValues.modifiers.oneHanded) {
+            damageValue -= 4;
+        }
+
+        damage = damage.replace(/\d+/, damageValue.toString());
         setModifiedDamage(damage);
 
         // If the base item is not found, return early
@@ -239,7 +247,7 @@ const CreateRareItem = () => {
                             >
                                 {qualitiesData.map((quality) => (
                                     <option key={quality.name} value={quality.name}>
-                                        {quality.name}
+                                        {quality.name} (cost: {quality.cost})
                                     </option>
                                 ))}
                             </select>
