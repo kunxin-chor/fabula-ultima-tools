@@ -1,0 +1,86 @@
+[
+    {
+        "name": "No custom quality",
+        "cost": 0,
+        "effect": "Does nothing!",
+        "category": "N/A"
+    },
+    {
+      "name": "Antistatus",
+      "cost": 500.0,
+      "effect": "You are immune to a single status effect.",
+      "category": "Defensive Qualities"
+    },
+    {
+      "name": "Resistance",
+      "cost": 700.0,
+      "effect": "You have Resistance to a single damage type (not physical damage).",
+      "category": "Defensive Qualities"
+    },
+    {
+      "name": "Dual Resistance",
+      "cost": 1000.0,
+      "effect": "You have Resistance to two damage types (not physical damage).",
+      "category": "Defensive Qualities"
+    },
+    {
+      "name": "Swordbreaker",
+      "cost": 1000.0,
+      "effect": "You have Resistance to physical damage.",
+      "category": "Defensive Qualities"
+    },
+    {
+      "name": "Immunity",
+      "cost": 1500.0,
+      "effect": "You have Immunity to a single damage type (not physical damage).",
+      "category": "Defensive Qualities"
+    },
+    {
+      "name": "Perfect Health",
+      "cost": 2000.0,
+      "effect": "You are immune to all status effects.",
+      "category": "Defensive Qualities"
+    },
+    {
+      "name": "Initiative Up",
+      "cost": 500.0,
+      "effect": "You gain a +4 bonus to your Initiative modifier.",
+      "category": "Enhancement Qualities"
+    },
+    {
+      "name": "Accuracy Up",
+      "cost": 1000.0,
+      "effect": "You gain a +1 bonus to your Accuracy Checks.",
+      "category": "Enhancement Qualities"
+    },
+    {
+      "name": "Magic Up",
+      "cost": 1000.0,
+      "effect": "You gain a +1 bonus to your Magic Checks.",
+      "category": "Enhancement Qualities"
+    },
+    {
+      "name": "Vitality Up",
+      "cost": 1000.0,
+      "effect": "When you recover HP, you recover 5 extra HP.",
+      "category": "Enhancement Qualities"
+    },
+    {
+      "name": "Healing Up",
+      "cost": 1500.0,
+      "effect": "Spells you cast that whose effects restore Hit Points will restore 5 extra Hit Points.",
+      "category": "Enhancement Qualities"
+    },
+    {
+      "name": "Spell Up",
+      "cost": 2000.0,
+      "effect": "Spells you cast deal 5 extra damage.",
+      "category": "Enhancement Qualities"
+    },
+    {
+      "name": "Weapon Up",
+      "cost": 2000.0,
+      "effect": "Your attacks with (choose one: melee, ranged) weapons deal 5 extra damage.",
+      "category": "Enhancement Qualities"
+    }
+  ]

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import qualitiesData from './qualities.json';
-import baseItemsData from './homebrew-items.json';
+import baseItemsData from './baseItems.json';
 import elementsData from './elements.json';
 
 
@@ -20,6 +20,7 @@ const CreateRareItem = () => {
             stat1: 'MIG',
             stat2: 'DEX',
         },
+
     });
 
     const [totalCost, setTotalCost] = useState(0);
@@ -44,7 +45,7 @@ const CreateRareItem = () => {
             ...prevValues,
             accuracyCheck: { ...prevValues.accuracyCheck, [name]: value },
         }));
-    };    
+    };
 
     const selectedBaseItem = baseItemsData.find(
         (item) => item.name === formValues.baseItem
@@ -60,16 +61,16 @@ const CreateRareItem = () => {
 
     const updateAccuracyCheckStats = (stat1, stat2) => {
         setFormValues((prevValues) => ({
-          ...prevValues,
-          accuracyCheck: {
-            ...prevValues.accuracyCheck,
-            stat1,
-            stat2,
-          },
+            ...prevValues,
+            accuracyCheck: {
+                ...prevValues.accuracyCheck,
+                stat1,
+                stat2,
+            },
         }));
-      };
-    
-  
+    };
+
+
 
     const calculateCost = useCallback(() => {
 
@@ -117,7 +118,7 @@ const CreateRareItem = () => {
         setTotalCost(cost);
     }, [formValues, selectedBaseItem, selectedQuality]);
 
-    
+
     // recalculate the cost if the formvalues have changed
     useEffect(() => {
         calculateCost();
@@ -130,8 +131,53 @@ const CreateRareItem = () => {
 
     useEffect(() => {
         const attributes = getAttributesFromAccuracy(selectedBaseItem.accuracy);
+        console.log(attributes);
         updateAccuracyCheckStats(attributes[0], attributes[1]);
-      }, [selectedBaseItem]);
+        let accuracyBonus = attributes[2] ? true : false;        
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            modifiers: {
+                ...prevValues.modifiers,
+                accuracyBonus: accuracyBonus
+            },
+        }));
+    }, [selectedBaseItem]);
+
+   
+    const generateJsonOutput = () => {
+        const jsonOutput = {
+          itemName: formValues.itemName,
+          accuracyCheck: {
+            stat1: formValues.accuracyCheck.stat1,
+            stat2: formValues.accuracyCheck.stat2,
+          },
+          accuracyModifier: formValues.modifiers.accuracyBonus ? 1 : 0,
+          damage: modifiedDamage,
+          hands: selectedBaseItem.hands.toLowerCase(),
+          reach: selectedBaseItem.reach.toLowerCase(),
+          damageType: formValues.damageType.toLowerCase(),
+          qualities: {
+            baseItemQualities: selectedBaseItem.qualities,
+            selectedQuality: selectedQuality.name,
+          },
+          baseItem: selectedBaseItem.name,
+          totalCost: totalCost,
+        };
+      
+        return JSON.stringify(jsonOutput, null, 2);
+      };
+
+    const copyStateToClipboard = async () => {
+        try {
+          const jsonState = generateJsonOutput();
+          await navigator.clipboard.writeText(jsonState);
+          alert('State copied to clipboard');
+        } catch (err) {
+          alert('Failed to copy state to clipboard');
+        }
+      };
+      
+
 
     return (
         <div className="container">
@@ -295,15 +341,22 @@ const CreateRareItem = () => {
                         <div className="card-body">
                             <ul className="list-group list-group-flush">
                                 <li className="list-group-item">Name: {formValues.itemName}</li>
-                                <li className="list-group-item">Accuracy Check: {formValues.accuracyCheck.stat1} + {formValues.accuracyCheck.stat2}</li>
+                                <li className="list-group-item">Accuracy Check: {formValues.accuracyCheck.stat1} 
+                                                                + {formValues.accuracyCheck.stat2} 
+                                                                { formValues.modifiers.accuracyBonus ? <span> + 1</span>:null}
+                               </li>
                                 <li className="list-group-item">Damage: {modifiedDamage}</li>
                                 <li className="list-group-item">Hands: {selectedBaseItem.hands}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Element: {formValues.damageType}</li>
                                 <li className="list-group-item">Qualities: {selectedBaseItem.qualities} {selectedQuality.name}</li>
                                 <li className="list-group-item">Base Item: {selectedBaseItem.name}</li>
+                                <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Total Cost: {totalCost} zenit</li>
+
                             </ul>
+                            <button className="mt-3" onClick={copyStateToClipboard}>Copy State to Clipboard</button>
+
                         </div>
                     </div>
                 </div>

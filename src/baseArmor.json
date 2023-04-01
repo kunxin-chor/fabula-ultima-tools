@@ -1,0 +1,105 @@
+[
+    {
+      "name": "No Armor",
+      "martial": false,
+      "defense": "+0",
+      "magicDefense": "+0",
+      "cost": 0,
+      "initiative": "-",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Silk Shirt",
+      "martial": false,
+      "defense": "+0",
+      "magicDefense": "+0",
+      "cost": 100,
+      "initiative": "+2",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Travel Garb",
+      "martial": false,
+      "defense": "+1",
+      "magicDefense": "+0",
+      "cost": 100,
+      "initiative": "+1",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Combat Tunic",
+      "martial": false,
+      "defense": "+1",
+      "magicDefense": "+0",
+      "cost": 150,
+      "initiative": "-",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Sage Robe",
+      "martial": false,
+      "defense": "+1",
+      "magicDefense": "+2",
+      "cost": 200,
+      "initiative": "-2",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Brigandine",
+      "martial": true,
+      "defense": "10",
+      "magicDefense": "+0",
+      "cost": 150,
+      "initiative": "-2",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Bronze Plate",
+      "martial": true,
+      "defense": "11",
+      "magicDefense": "+0",
+      "cost": 200,
+      "initiative": "-3",
+      "quality": {
+        "name":"Weak vs. Bolt",
+        "effect": "Take +5 damage from the Bolt element"
+      }
+    },
+    {
+      "name": "Runic Plate",
+      "martial": true,
+      "defense": "11",
+      "magicDefense": "+0",
+      "cost": 250,
+      "initiative": "+1",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Steel Plate",
+      "martial": true,
+      "defense": "12",
+      "magicDefense": "+0",
+      "cost": 300,
+      "initiative": "-4",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Bronze Shield",
+      "martial": false,
+      "defense": "+2",
+      "magicDefense": "-",
+      "cost": 100,
+      "initiative": "-",
+      "quality": "No Quality"
+    },
+    {
+      "name": "Runic Shield",
+      "martial": true,
+      "defense": "+2",
+      "magicDefense": "+2",
+      "cost": 150,
+      "initiative": "-",
+      "quality": "No Quality"
+    }
+  ]
+  
