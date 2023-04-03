@@ -17,7 +17,7 @@ const CreateRareItem = () => {
             damageIncrease: false,
         },
         accuracyCheck: {
-            stat1: 'MIG',
+            stat1: 'DEX',
             stat2: 'DEX',
         },
 
