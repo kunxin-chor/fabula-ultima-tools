@@ -3,8 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import RareAccessory from './RareAccessory';
 import RareDefensiveGear from './RareDefensiveGear';
 import RareItem from './RareItem';
+import NpcDesigner from './NpcDesigner';
 
-function App() {
+function OldApp() {
   return (
     <Router>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -37,7 +38,13 @@ function App() {
         </Routes>
       </div>
     </Router>
+
+
   );
+}
+
+function App() {
+  return <NpcDesigner/>
 }
 
 export default App;
