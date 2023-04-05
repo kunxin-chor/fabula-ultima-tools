@@ -26,10 +26,6 @@ const RareDefensiveGear = () => {
 
         const baseArmor = baseArmors.find(armor => armor.name === selectedBase);
 
-        const mergedQualities = baseArmor.quality && baseArmor.quality !== "No Quality"
-            ? [baseArmor.quality, selectedQuality]
-            : [selectedQuality];
-
         const quality = armorQualities.find(q => q.name === selectedQuality);     
         const qualityEffects = [];
 
