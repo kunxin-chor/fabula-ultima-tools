@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import armorQualities from "./armorQualities.json"
+import armorQualities from "./armorQualities.json";
+import QualityDropdown from './QualityDrop';
 
 const RareAccessory = () => {
-  const [selectedQuality, setSelectedQuality] = useState(null);
+  const [selectedQuality, setSelectedQuality] = useState(armorQualities[0]);
   const [customName, setCustomName] = useState('');
   const [combinedAccessory, setCombinedAccessory] = useState(null);
 
@@ -22,15 +23,15 @@ const RareAccessory = () => {
       return;
     }
 
-    const quality = armorQualities.find(q => q.name === selectedQuality);
+
 
     const accessory = {
-      name: customName || `Accessory with ${selectedQuality}`,
-      cost: quality.cost,
+      name: customName || `Accessory with ${selectedQuality.name}`,
+      cost: selectedQuality.cost,
       qualities: [
         {
-          name: quality.name,
-          effect: quality.effect,
+          name: selectedQuality.name,
+          effect: selectedQuality.effect,
         },
       ],
     };
@@ -42,14 +43,12 @@ const RareAccessory = () => {
       <h1>Create Accessory</h1>
       <div className="mb-3">
         <label htmlFor="quality" className="form-label">Select a quality: </label>
-        <select id="quality" className="form-select" onChange={e => setSelectedQuality(e.target.value)}>
-          <option value="">Choose...</option>
-          {armorQualities.map(quality => (
-            <option key={quality.name} value={quality.name}>
-              {quality.name}
-            </option>
-          ))}
-        </select>
+        <QualityDropdown
+          qualities={armorQualities}
+          selectedQuality={selectedQuality}
+          onSelect={setSelectedQuality}
+          effectKey="effect"
+        />
       </div>
       <div className="mb-3">
         <label htmlFor="custom-name" className="form-label">Assign a custom name (optional): </label>

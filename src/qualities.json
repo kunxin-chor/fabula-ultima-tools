@@ -1,5 +1,10 @@
 [
     {
+        "name": "No Effect",
+        "cost": 0,
+        "description":"The weapon has no additional effect"
+    },
+    {
         "name": "Magical",
         "cost": 100,
         "description": "The weapon targets Magic Defense instead of Defense."

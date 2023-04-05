@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import qualitiesData from './qualities.json';
 import baseItemsData from './baseItems.json';
 import elementsData from './elements.json';
+import QualityDropdown from './QualityDrop';
 
 
 const CreateRareItem = () => {
@@ -48,6 +49,10 @@ const CreateRareItem = () => {
         }));
     };
 
+    const handleQualitySelection = (quality) => {
+        setFormValues((prevValues) => ({ ...prevValues, quality: quality.name }));
+      };
+
     const selectedBaseItem = baseItemsData.find(
         (item) => item.name === formValues.baseItem
     );
@@ -55,6 +60,8 @@ const CreateRareItem = () => {
     const selectedQuality = qualitiesData.find(
         (quality) => quality.name === formValues.quality
     )
+
+    
 
     const getAttributesFromAccuracy = (accuracyStr) => {
         return accuracyStr.split(' + ').map((attr) => attr.trim());
@@ -70,8 +77,6 @@ const CreateRareItem = () => {
             },
         }));
     };
-
-
 
     const calculateCost = useCallback(() => {
 
@@ -133,29 +138,26 @@ const CreateRareItem = () => {
         calculateCost();
     }, [calculateCost]);
 
-    useEffect(() => {
-        calculateCost();
-    }, []);
 
     useEffect(() => {
         const attributes = getAttributesFromAccuracy(selectedBaseItem.accuracy);
         updateAccuracyCheckStats(attributes[0], attributes[1]);
         let accuracyBonus = attributes[2] ? true : false;
-       
+
         const qualitiyEffects = [];
 
         // if there is a quality, and it is not "No Quality"
         // add the quality to the list of quality effects
         console.log(selectedBaseItem);
-        if (selectedBaseItem.qualities && selectedBaseItem.qualities !== 'No Quality') {          
-                console.log("adding base item qualities")
-                qualitiyEffects.push(...selectedBaseItem.qualities.map((quality) => {
-                   return {
-                        "name": quality.name,
-                        "effect": quality.description
-                    }
-                }));
-         
+        if (selectedBaseItem.qualities && selectedBaseItem.qualities !== 'No Quality') {
+            console.log("adding base item qualities")
+            qualitiyEffects.push(...selectedBaseItem.qualities.map((quality) => {
+                return {
+                    "name": quality.name,
+                    "effect": quality.description
+                }
+            }));
+
         }
 
         if (selectedQuality) {
@@ -261,21 +263,13 @@ const CreateRareItem = () => {
                                 ))}
                             </select>
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="quality">Quality:</label>
-                            <select
-                                name="quality"
-                                value={formValues.quality.name}
-                                onChange={handleInputChange}
-                                className="form-control"
-                                id="quality"
-                            >
-                                {qualitiesData.map((quality) => (
-                                    <option key={quality.name} value={quality.name}>
-                                        {quality.name} (cost: {quality.cost})
-                                    </option>
-                                ))}
-                            </select>
+                        <div className="form-group mt-2 mb-2">
+                            <label>Quality</label>
+                            <QualityDropdown
+                                qualities={qualitiesData}
+                                selectedQuality={selectedQuality}
+                                onSelect={handleQualitySelection}
+                            />
                         </div>
                         <h3>Modifiers</h3>
                         <div className="form-check">

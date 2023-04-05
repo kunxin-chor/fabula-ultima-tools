@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import baseArmors from "./baseArmor.json"
 import armorQualities from "./armorQualities.json"
+import QualityDropdown from './QualityDrop';
 
 const RareDefensiveGear = () => {
     const [selectedBase, setSelectedBase] = useState(null);
-    const [selectedQuality, setSelectedQuality] = useState(null);
+    const [selectedQuality, setSelectedQuality] = useState(armorQualities[0]);
     const [customName, setCustomName] = useState('');
     const [combinedArmor, setCombinedArmor] = useState(null);
 
@@ -26,27 +27,29 @@ const RareDefensiveGear = () => {
 
         const baseArmor = baseArmors.find(armor => armor.name === selectedBase);
 
-        const quality = armorQualities.find(q => q.name === selectedQuality);     
+        // const quality = armorQualities.find(q => q.name === selectedQuality);
+        // console.log("found quality ==", quality)
         const qualityEffects = [];
 
-        if(baseArmor.quality && baseArmor.quality !== "No Quality") {
+        if (baseArmor.quality && baseArmor.quality !== "No Quality") {
             qualityEffects.push({
                 "name": baseArmor.quality.name,
                 "effect": baseArmor.quality.effect
             })
         }
 
-        if (quality) {
+        if (selectedQuality) {
+            console.log(selectedQuality);
             qualityEffects.push({
-                "name": quality.name,
-                "effect": quality.effect,                
+                "name": selectedQuality.name,
+                "effect": selectedQuality.effect,
             })
         }
 
         const rareArmor = {
             ...baseArmor,
-            name: customName || `${baseArmor.name} with ${selectedQuality}`,
-            cost: baseArmor.cost + quality.cost,
+            name: customName || `${baseArmor.name} with ${selectedQuality.name}`,
+            cost: baseArmor.cost + (selectedQuality?.cost || 0),
             qualities: qualityEffects,
         };
         setCombinedArmor(rareArmor);
@@ -68,14 +71,12 @@ const RareDefensiveGear = () => {
             </div>
             <div className="mb-3">
                 <label htmlFor="quality" className="form-label">Select a quality: </label>
-                <select id="quality" className="form-select" onChange={e => setSelectedQuality(e.target.value)}>
-                    <option value="">Choose...</option>
-                    {armorQualities.map(quality => (
-                        <option key={quality.name} value={quality.name}>
-                            {quality.name}
-                        </option>
-                    ))}
-                </select>
+                <QualityDropdown
+                    qualities={armorQualities}
+                    selectedQuality={selectedQuality}
+                    onSelect={setSelectedQuality}
+                    effectKey="effect"
+                />
             </div>
             <div className="mb-3">
                 <label htmlFor="custom-name" className="form-label">Assign a custom name (optional): </label>
