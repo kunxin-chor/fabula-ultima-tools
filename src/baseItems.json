@@ -36,6 +36,23 @@
         "cost": 150
     },
     {
+        "name": "Heavy Crossbow",
+        "martial": "No",
+        "category": "Bow",
+        "reach": "Ranged",
+        "hands": "Two-Handed",
+        "accuracy": "DEX + INS",
+        "element": "Physical",
+        "damage": "【HR + 12】",
+        "qualities": [
+            {
+                "name": "Reload",
+                "description": "May not be used until two turns later"
+            }
+        ],
+        "cost": 150
+    },
+    {
         "name": "Shortbow",
         "martial": "No",
         "category": "Bow",

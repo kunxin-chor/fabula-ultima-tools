@@ -1,0 +1,95 @@
+{
+  "beast": {
+    "name": "Beast",
+    "startingSkills": 4,
+    "description": "Beasts are feral creatures with animal intelligence. While their shape is sometimes twisted by magic, they generally do not use spells.",
+    "examples": ["Giant rat", "sun bear", "warrior ant"],
+    "rules": ["Beasts cannot acquire the Use Equipment Skill."],
+    "elementalAffinities": {},
+    "customActions": []
+  },
+  "construct": {
+    "name": "Construct",
+    "startingSkills": 2,
+    "description": "Constructs are artificial beings animated by the power of souls, often crafted by alchemists, mages, or scientists.",
+    "examples": ["Gargoyle", "golem", "magitech soldier"],
+    "rules": ["Constructs are Immune to poison damage, Resistant to earth damage, and immune to poisoned."],
+    "elementalAffinities": {
+      "poison": "immune",
+      "earth": "resistant",
+      "poisoned": "immune"
+    },
+    "customActions": []
+  },
+  "demon": {
+    "name": "Demon",
+    "startingSkills": 3,
+    "description": "Demons are incarnations of legends and beliefs. Despite possessing a body, they are not truly alive. Some may even reincarnate when slain.",
+    "examples": ["Boogeyman", "devil", "imp"],
+    "rules": ["Demons are Resistant to two damage types of your choice."],
+    "elementalAffinities": {},
+    "customActions": []
+  },
+  "elemental": {
+    "name": "Elemental",
+    "startingSkills": 2,
+    "description": "Elementals are tangible manifestations of the great forces of nature. Some of them are sentient, but many are devoid of thought.",
+    "examples": ["Nymph", "phoenix", "titan"],
+    "rules": ["Elementals are Immune to poison damage, Immune to a second damage type of your choice, and immune to poisoned."],
+    "elementalAffinities": {
+      "poison": "immune",
+      "poisoned": "immune"
+    },
+    "customActions": []
+  },
+  "humanoid": {
+    "name": "Humanoid",
+    "startingSkills": 3,
+    "description": "This is a broad category, a catch-all term for intelligent creatures who tend to live in communities and rely on tools and equipment.",
+    "examples": ["Bandit", "kobold", "ogre"],
+    "rules": ["Humanoids always gain the Use Equipment Skill for free."],
+    "elementalAffinities": {},
+    "customActions": []
+  },
+  "monster": {
+    "name": "Monster",
+    "startingSkills": 4,
+    "description": "Monsters are magical beasts, generally quite intelligent and gifted with supernatural powers. Their features are often bizarre.",
+    "examples": ["Basilisk", "dragon", "mimic"],
+    "rules": ["Monsters have no special rules."],
+    "elementalAffinities": {},
+    "customActions": []
+  },
+  "plant": {
+    "name": "Plant",
+    "startingSkills": 3,
+    "description": "Far from being typical vegetation, these plants have evolved into dangerous predators due to mutation or magical influence.",
+    "examples": ["Alraune", "dragontrap", "treant"],
+    "rules": ["Plants are immune to dazed, shaken, and enraged, and Vulnerable to (choose one: air, bolt, fire, ice) damage."],
+    "elementalAffinities": {
+      "dazed": "immune",
+      "shaken": "immune",
+      "enraged": "immune"
+    },
+    "customActions": []
+  },
+  "undead": {
+    "name": "Undead",
+    "startingSkills": 2,
+    "description": "Undead may be corpses reanimated through magic or restless spirits unable to peacefully return to the stream of souls that forms creation.",
+    "examples": ["Mummy", "skeleton", "zombie"],
+    "rules": [
+      "Undead are Immune to dark and poison damage, immune to poisoned, and Vulnerable to light damage.",
+      "Additionally, when an effect (such as an Arcanum, a potion, or a spell) would cause an undead creature to recover Hit Points, whoever controls that effect may instead have the undead lose half as many Hit Points"
+    ],
+    "elementalAffinities": {
+      "dark": "immune",
+      "poison": "immune",
+      "poisoned": "immune",
+      "light": "vulnerable"
+    },
+    "customActions": []
+  }
+}
+
+

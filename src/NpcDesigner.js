@@ -1,7 +1,8 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect, useMemo } from 'react';
 import npcReducer from './NpcDesigner/NpcReducer';
 import "./NpcDesigner/npc.css"
-
+import speices from "./NpcDesigner/species.json"
+import elements from "./elements.json";
 const attributes = ["DEX", "INS", "MIG", "WLP"];
 
 // Define the initial state for the NPC
@@ -10,14 +11,9 @@ const initialState = {
     traits: [],
     level: 5,
     species: '',
-    speciesInfo: {
-        baseSkills: 0,
-        resistances: [],
-        vulnerabilities: [],
-        immunities: [],
-        absorptions: [],
-        customActions: [],
-    },
+    elementalAffinities: [
+
+    ],
     attributes: {
         DEX: 6,
         INS: 6,
@@ -32,8 +28,11 @@ const initialState = {
     maxHP: 0,
     crisisScore: 0,
     maxMP: 0,
-    defense: 0,
-    magicDefense: 0,
+    improvedDefense:{
+        defenseBonus: 0,
+        magicDefenseBonus: 0,    
+        skillPointCost: 0
+    },   
     accuracyBonus: 0,
     magicBonus: 0,
     damageBonus: 0,
@@ -42,7 +41,7 @@ const initialState = {
         armor: {},
         shield: {}
     },
-    skills: 0
+    baseSkillPoints: 0
 };
 
 
@@ -52,12 +51,25 @@ function NpcDesigner() {
 
     const handleFormChange = (event) => {
         const { name, value } = event.target;
-
         dispatch({
             type: 'UPDATE_FIELD',
             payload: { name, value },
         });
     };
+
+    function getMaxSkillPoints(level, elementalAffinities, baseSkillPoints) {
+        const skillPointsFromLevel = Math.floor(level / 10);
+    
+        const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "vulnerable"
+        ).length;        
+        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities;
+      }  
+
+    const maxSkillPoints = useMemo(
+        () => getMaxSkillPoints(state.level, state.elementalAffinities, state.baseSkillPoints),
+        [state.level, state.elementalAffinities, state.baseSkillPoints]
+      );
 
     return (
         <div className="container">
@@ -109,7 +121,8 @@ function NpcDesigner() {
                                     id={key}
                                     name={key}
                                     value={value}
-                                    min="2"
+                                    min="6"
+                                    max="12"
                                     step="2"
                                     onChange={(e) => {
                                         const diceSize = parseInt(e.target.value);
@@ -128,9 +141,69 @@ function NpcDesigner() {
                 </div>
             </div>
 
+            {/* Species */}
+            <div className="form-group">
+                <label>Species:</label>
+                <select name="species" className="form-control" value={state.species} onChange={(e) => {
+                    dispatch({
+                        type: "UPDATE_SPECIES",
+                        payload: {
+                            species: e.target.value
+                        }
+                    })
+                }}>
+                    <option value="">Select a species</option>
+                    {
+                        Object.entries(speices).map(([key, value]) => {
+                            return <option value={key}>{value.name}</option>
+                        })
+                    }
+                </select>
+            </div>
 
+            {/* Elemental Affinities */}
+            {/* For each element, if it exists inside Elemental Affinities, use its
+            value, otherwise set to "normal" */}
+            <h2>Elemental Affinities</h2>
+            <div className="row mt-3">
+                {elements.map(({ name: value }) => (
+                    <div key={value} className="col-sm-6 mb-2">
+                        <div className="form-group d-flex align-items-center attribute-container">
+                            <label htmlFor={value} className="me-2">
+                                {value}:
+                            </label>
+                            <div className="d-inline-flex align-items-center">
+                                <select
+                                    className="form-control"
+                                    id={value}
+                                    name={value}
+                                    value={state.elementalAffinities[value] || "normal"}
+                                    onChange={(e) => {
+                                        const affinity = e.target.value;
+                                        dispatch({
+                                            type: "UPDATE_ELEMENTAL_AFFINITY",
+                                            payload: {
+                                                element: value,
+                                                value: affinity,
+                                            },
+                                        });
+                                    }}
+                                >
+                                    <option value="normal">Normal</option>
+                                    <option value="vulnerable">Vulnerable</option>
+                                    <option value="resistant">Resistant</option>
+                                    <option value="immune">Immune</option>
+                                    <option value="absorb">Absorb</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
-
+            {/* Skills */}
+            <h2>Skills</h2>
+            <p>Max Skill Points:{maxSkillPoints}</p>
         </div>
     );
 }

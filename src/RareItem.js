@@ -25,6 +25,7 @@ const CreateRareItem = () => {
 
     const [totalCost, setTotalCost] = useState(0);
     const [modifiedDamage, setModifiedDamage] = useState('');
+    const [combinedQualities, setCombinedQualities] = useState([]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -78,11 +79,11 @@ const CreateRareItem = () => {
         let damage = selectedBaseItem.damage;
         let damageValue = parseInt(damage.match(/\d+/)[0], 10);
         if (formValues.modifiers.damageIncrease) {
-           damageValue += 4;           
+            damageValue += 4;
         }
         if (formValues.modifiers.twoHanded) {
             damageValue += 4;
-        } 
+        }
         if (formValues.modifiers.oneHanded) {
             damageValue -= 4;
         }
@@ -132,16 +133,40 @@ const CreateRareItem = () => {
         calculateCost();
     }, [calculateCost]);
 
-    // calculate the initial cost
     useEffect(() => {
         calculateCost();
-    }, [calculateCost]);
+    }, []);
 
     useEffect(() => {
         const attributes = getAttributesFromAccuracy(selectedBaseItem.accuracy);
-        console.log(attributes);
         updateAccuracyCheckStats(attributes[0], attributes[1]);
-        let accuracyBonus = attributes[2] ? true : false;        
+        let accuracyBonus = attributes[2] ? true : false;
+       
+        const qualitiyEffects = [];
+
+        // if there is a quality, and it is not "No Quality"
+        // add the quality to the list of quality effects
+        console.log(selectedBaseItem);
+        if (selectedBaseItem.qualities && selectedBaseItem.qualities !== 'No Quality') {          
+                console.log("adding base item qualities")
+                qualitiyEffects.push(...selectedBaseItem.qualities.map((quality) => {
+                   return {
+                        "name": quality.name,
+                        "effect": quality.description
+                    }
+                }));
+         
+        }
+
+        if (selectedQuality) {
+            qualitiyEffects.push({
+                "name": selectedQuality.name,
+                "effect": selectedQuality.description
+            });
+        }
+
+
+
         setFormValues((prevValues) => ({
             ...prevValues,
             modifiers: {
@@ -149,42 +174,42 @@ const CreateRareItem = () => {
                 accuracyBonus: accuracyBonus
             },
         }));
-    }, [selectedBaseItem]);
 
-   
+        setCombinedQualities(qualitiyEffects);
+
+    }, [selectedBaseItem, selectedQuality]);
+
+
     const generateJsonOutput = () => {
         const jsonOutput = {
-          itemName: formValues.itemName,
-          accuracyCheck: {
-            stat1: formValues.accuracyCheck.stat1,
-            stat2: formValues.accuracyCheck.stat2,
-          },
-          accuracyModifier: formValues.modifiers.accuracyBonus ? 1 : 0,
-          damage: modifiedDamage,
-          hands: selectedBaseItem.hands.toLowerCase(),
-          reach: selectedBaseItem.reach.toLowerCase(),
-          damageType: formValues.damageType.toLowerCase(),
-          qualities: {
-            baseItemQualities: selectedBaseItem.qualities,
-            selectedQuality: selectedQuality.name,
-          },
-          baseItem: selectedBaseItem.name,
-          totalCost: totalCost,
+            itemName: formValues.itemName,
+            accuracyCheck: {
+                stat1: formValues.accuracyCheck.stat1,
+                stat2: formValues.accuracyCheck.stat2,
+            },
+            accuracyModifier: formValues.modifiers.accuracyBonus ? 1 : 0,
+            damage: modifiedDamage,
+            hands: selectedBaseItem.hands.toLowerCase(),
+            reach: selectedBaseItem.reach.toLowerCase(),
+            damageType: formValues.damageType.toLowerCase(),
+            qualities: combinedQualities,
+            baseItem: selectedBaseItem.name,
+            totalCost: totalCost,
         };
-      
+
         return JSON.stringify(jsonOutput, null, 2);
-      };
+    };
 
     const copyStateToClipboard = async () => {
         try {
-          const jsonState = generateJsonOutput();
-          await navigator.clipboard.writeText(jsonState);
-          alert('State copied to clipboard');
+            const jsonState = generateJsonOutput();
+            await navigator.clipboard.writeText(jsonState);
+            alert('State copied to clipboard');
         } catch (err) {
-          alert('Failed to copy state to clipboard');
+            alert('Failed to copy state to clipboard');
         }
-      };
-      
+    };
+
 
 
     return (
@@ -349,15 +374,21 @@ const CreateRareItem = () => {
                         <div className="card-body">
                             <ul className="list-group list-group-flush">
                                 <li className="list-group-item">Name: {formValues.itemName}</li>
-                                <li className="list-group-item">Accuracy Check: {formValues.accuracyCheck.stat1} 
-                                                                + {formValues.accuracyCheck.stat2} 
-                                                                { formValues.modifiers.accuracyBonus ? <span> + 1</span>:null}
-                               </li>
+                                <li className="list-group-item">Accuracy Check: {formValues.accuracyCheck.stat1}
+                                    + {formValues.accuracyCheck.stat2}
+                                    {formValues.modifiers.accuracyBonus ? <span> + 1</span> : null}
+                                </li>
                                 <li className="list-group-item">Damage: {modifiedDamage}</li>
                                 <li className="list-group-item">Hands: {selectedBaseItem.hands}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Element: {formValues.damageType}</li>
-                                <li className="list-group-item">Qualities: {selectedBaseItem.qualities} {selectedQuality.name}</li>
+                                <li className="list-group-item">Qualities:
+                                    <ul>
+                                        {combinedQualities.map((quality) => (
+                                            <li key={quality.name}>{quality.name}</li>
+                                        ))}
+                                    </ul>
+                                </li>
                                 <li className="list-group-item">Base Item: {selectedBaseItem.name}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Total Cost: {totalCost} zenit</li>

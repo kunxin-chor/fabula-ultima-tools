@@ -5,7 +5,7 @@ import RareDefensiveGear from './RareDefensiveGear';
 import RareItem from './RareItem';
 import NpcDesigner from './NpcDesigner';
 
-function OldApp() {
+function App() {
   return (
     <Router>
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -43,7 +43,7 @@ function OldApp() {
   );
 }
 
-function App() {
+function OldApp() {
   return <NpcDesigner/>
 }
 
