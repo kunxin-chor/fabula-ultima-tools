@@ -91,7 +91,8 @@
   },
   {
     "name": "Spellweaven",
-    "cost": 650
+    "cost": 650,
+    "effect":"Choose a spell or skill that costs 10 MP. That spell now only costs 5 MP to cast."
   },
   {
     "name": "Weapon Expertise",
