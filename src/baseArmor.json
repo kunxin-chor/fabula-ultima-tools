@@ -1,105 +1,101 @@
 [
-    {
-      "name": "No Armor",
-      "martial": false,
-      "defense": "+0",
-      "magicDefense": "+0",
-      "cost": 0,
-      "initiative": "0",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Silk Shirt",
-      "martial": false,
-      "defense": "+0",
-      "magicDefense": "+2",
-      "cost": 100,
-      "initiative": "-1",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Travel Garb",
-      "martial": false,
-      "defense": "+1",
-      "magicDefense": "+1",
-      "cost": 100,
-      "initiative": "-1",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Combat Tunic",
-      "martial": false,
-      "defense": "+1",
-      "magicDefense": "+0",
-      "cost": 150,
-      "initiative": "-",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Sage Robe",
-      "martial": false,
-      "defense": "+1",
-      "magicDefense": "+2",
-      "cost": 200,
-      "initiative": "-2",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Brigandine",
-      "martial": true,
-      "defense": "10",
-      "magicDefense": "+0",
-      "cost": 150,
-      "initiative": "-2",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Bronze Plate",
-      "martial": true,
-      "defense": "11",
-      "magicDefense": "+0",
-      "cost": 200,
-      "initiative": "-3",
-      "quality": {
-        "name":"Weak vs. Bolt",
-        "effect": "Take +5 damage from the Bolt element"
-      }
-    },
-    {
-      "name": "Runic Plate",
-      "martial": true,
-      "defense": "11",
-      "magicDefense": "+1",
-      "cost": 250,
-      "initiative": "-3",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Steel Plate",
-      "martial": true,
-      "defense": "12",
-      "magicDefense": "+0",
-      "cost": 300,
-      "initiative": "-4",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Bronze Shield",
-      "martial": false,
-      "defense": "+2",
-      "magicDefense": "-",
-      "cost": 100,
-      "initiative": "-",
-      "quality": "No Quality"
-    },
-    {
-      "name": "Runic Shield",
-      "martial": true,
-      "defense": "+2",
-      "magicDefense": "+2",
-      "cost": 150,
-      "initiative": "-",
-      "quality": "No Quality"
+  {
+    "name": "Unarmored",
+    "martial": false,
+    "defense": "[DEX]",
+    "magicDefense": "[INS]",
+    "cost": 0,
+    "initiative": "+0",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Mage Robes",
+    "martial": false,
+    "defense": "[DEX]",
+    "magicDefense": "[INS]+2",
+    "cost": 100,
+    "initiative": "-1",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Leather Jacket",
+    "martial": false,
+    "defense": "[DEX]+1",
+    "magicDefense": "[INS]+1",
+    "cost": 100,
+    "initiative": "-1",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Ironwood Armor",
+    "martial": true,
+    "defense": "[DEX]+1",
+    "magicDefense": "[INS]+2",
+    "cost": 150,
+    "initiative": "-1",
+    "quality": {
+      "name": "Weak vs. Fire",
+      "effect": "When you take fire damage, take +5 more (after resistances)"
     }
-  ]
-  
+  },
+  {
+    "name": "Hide Armor (M)",
+    "martial": true,
+    "defense": "10",
+    "magicDefense": "[INS]",
+    "cost": 150,
+    "initiative": "-2",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Studded Leather Armor (M)",
+    "martial": true,
+    "defense": "10",
+    "magicDefense": "[INS]+1",
+    "cost": 200,
+    "initiative": "-3",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Wrymhide Armor (M)",
+    "martial": true,
+    "defense": "11",
+    "magicDefense": "[INS]",
+    "cost": 250,
+    "initiative": "-3",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Dragonshard Plate (M)",
+    "martial": true,
+    "defense": "11",
+    "magicDefense": "[INS]+1",
+    "cost": 400,
+    "initiative": "-4",
+    "quality": "No Quality"
+  },
+  {
+    "name": "Steel Plate (M)",
+    "martial": true,
+    "defense": "12",
+    "magicDefense": "[INS]",
+    "cost": 500,
+    "initiative": "-4",
+    "quality": {
+      "name": "Weak vs. Bolt",
+      "effect": "When you take bolt damage, you take +5 more (after accounting for resistances)"
+    }
+  },
+  {
+    "name": "Adamantine Plate (M)",
+    "martial": true,
+    "defense": "12",
+    "magicDefense": "[INS]+1",
+    "cost": 800,
+    "initiative": "-4",
+    "quality": {
+      "name": "Weak vs. Bolt",
+      "effect": "WHen you take bolt damage, you take +5 more (after accounting for resistances)"
+    }
+  }
+]

@@ -3,6 +3,7 @@ import qualitiesData from './qualities.json';
 import baseItemsData from './baseItems.json';
 import elementsData from './elements.json';
 import QualityDropdown from './QualityDrop';
+import QualitiesList from './QualitiesList';
 
 
 const CreateRareItem = () => {
@@ -60,6 +61,10 @@ const CreateRareItem = () => {
     const selectedQuality = qualitiesData.find(
         (quality) => quality.name === formValues.quality
     )
+
+    const updateCombinedQualitiesDescription = (index) => {
+
+    }
 
     
 
@@ -376,13 +381,10 @@ const CreateRareItem = () => {
                                 <li className="list-group-item">Hands: {selectedBaseItem.hands}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Element: {formValues.damageType}</li>
-                                <li className="list-group-item">Qualities:
-                                    <ul>
-                                        {combinedQualities.map((quality) => (
-                                            <li key={quality.name}>{quality.name}</li>
-                                        ))}
-                                    </ul>
-                                </li>
+                                 <QualitiesList
+                                    setCombinedQualities={setCombinedQualities}
+                                    combinedQualities={combinedQualities}
+                                 />
                                 <li className="list-group-item">Base Item: {selectedBaseItem.name}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Total Cost: {totalCost} zenit</li>

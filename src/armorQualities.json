@@ -1,86 +1,138 @@
 [
-    {
-        "name": "No quality",
-        "cost": 0,
-        "effect": "Does nothing!",
-        "category": "N/A"
-    },
-    {
-      "name": "Antistatus",
-      "cost": 500.0,
-      "effect": "You are immune to a single status effect.",
-      "category": "Defensive Qualities"
-    },
-    {
-      "name": "Resistance",
-      "cost": 700.0,
-      "effect": "You have Resistance to a single damage type (not physical damage).",
-      "category": "Defensive Qualities"
-    },
-    {
-      "name": "Dual Resistance",
-      "cost": 1000.0,
-      "effect": "You have Resistance to two damage types (not physical damage).",
-      "category": "Defensive Qualities"
-    },
-    {
-      "name": "Swordbreaker",
-      "cost": 1000.0,
-      "effect": "You have Resistance to physical damage.",
-      "category": "Defensive Qualities"
-    },
-    {
-      "name": "Immunity",
-      "cost": 1500.0,
-      "effect": "You have Immunity to a single damage type (not physical damage).",
-      "category": "Defensive Qualities"
-    },
-    {
-      "name": "Perfect Health",
-      "cost": 2000.0,
-      "effect": "You are immune to all status effects.",
-      "category": "Defensive Qualities"
-    },
-    {
-      "name": "Initiative Up",
-      "cost": 500.0,
-      "effect": "You gain a +4 bonus to your Initiative modifier.",
-      "category": "Enhancement Qualities"
-    },
-    {
-      "name": "Accuracy Up",
-      "cost": 1000.0,
-      "effect": "You gain a +1 bonus to your Accuracy Checks.",
-      "category": "Enhancement Qualities"
-    },
-    {
-      "name": "Magic Up",
-      "cost": 1000.0,
-      "effect": "You gain a +1 bonus to your Magic Checks.",
-      "category": "Enhancement Qualities"
-    },
-    {
-      "name": "Vitality Up",
-      "cost": 1000.0,
-      "effect": "When you recover HP, you recover 5 extra HP.",
-      "category": "Enhancement Qualities"
-    },
-    {
-      "name": "Healing Up",
-      "cost": 1500.0,
-      "effect": "Spells you cast that whose effects restore Hit Points will restore 5 extra Hit Points.",
-      "category": "Enhancement Qualities"
-    },
-    {
-      "name": "Spell Up",
-      "cost": 2000.0,
-      "effect": "Spells you cast deal 5 extra damage.",
-      "category": "Enhancement Qualities"
-    },
-    {
-      "name": "Weapon Up",
-      "cost": 2000.0,
-      "effect": "Your attacks with (choose one: melee, ranged) weapons deal 5 extra damage.",
-      "category": "Enhancement Qualities"
-    }
-  ]
+  {
+    "name": "No quality",
+    "cost": 0,
+    "effect": "Does nothing!",
+    "category": "N/A"
+  },
+  {
+    "name": "Antistatus",
+    "cost": 500.0,
+    "effect": "You are immune to a single status effect.",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Resistance",
+    "cost": 700.0,
+    "effect": "You have Resistance to a single damage type (not physical damage).",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Dual Resistance",
+    "cost": 1000.0,
+    "effect": "You have Resistance to two damage types (not physical damage).",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Swordbreaker",
+    "cost": 1000.0,
+    "effect": "You have Resistance to physical damage.",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Immunity",
+    "cost": 1500.0,
+    "effect": "You have Immunity to a single damage type (not physical damage).",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Perfect Health",
+    "cost": 2000.0,
+    "effect": "You are immune to all status effects.",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Initiative Up",
+    "cost": 500.0,
+    "effect": "You gain a +4 bonus to your Initiative modifier.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Accuracy Up",
+    "cost": 1000.0,
+    "effect": "You gain a +1 bonus to your Accuracy Checks.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Magic Up",
+    "cost": 1000.0,
+    "effect": "You gain a +1 bonus to your Magic Checks.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Vitality Up",
+    "cost": 1000.0,
+    "effect": "When you recover HP, you recover 5 extra HP.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Healing Up",
+    "cost": 1500.0,
+    "effect": "Spells you cast that whose effects restore Hit Points will restore 5 extra Hit Points.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Spell Up",
+    "cost": 2000.0,
+    "effect": "Spells you cast deal 5 extra damage.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Weapon Up",
+    "cost": 2000.0,
+    "effect": "Your attacks with (choose one: melee, ranged) weapons deal 5 extra damage.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Refreshing Brew",
+    "cost": 700,
+    "effect": "When a potion or magisphere created with your Inventory Points restore Mind Points, restores 5 extra Mind Points.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Spellweaven",
+    "cost": 650
+  },
+  {
+    "name": "Weapon Expertise",
+    "cost": 1000,
+    "effect": "Choose one of the following weapon groups: brawling weapons, daggers or thrown. You deal 5 extra damage with those weapons.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Soothing",
+    "cost": 1000,
+    "effect": "When you receive healing, you regain 5 more Hit Points.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Meditiative",
+    "cost": 800,
+    "effect": "When you regain Mind Points, you regain 5 more.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Power Pool",
+    "cost": 500,
+    "effect": "The item may hold a maximum of 20 MP, which you can charge during a rest.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Guard Channel",
+    "cost": 500,
+    "effect": "When you take the guard action and do not choose to cover a target, the next spell you cast has its MP cost halved.",
+    "category": "Enhancement Qualities"
+  },
+  {
+    "name": "Protective",
+    "cost": 800,
+    "effect": "At the start of a conflict, gain 15 shields (shields do not accumulate; use the best source of shields).",
+    "category": "Defensive Qualities"
+  },
+  {
+    "name": "Potent Brew",
+    "cost": 900,
+    "effect": "When a potion or magisphere created with your Inventory Points restore Hit Points, restores 5 extra Hit Points.",
+    "category": "Enhancement Qualities"
+  }
+]

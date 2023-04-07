@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import armorQualities from "./armorQualities.json";
 import QualityDropdown from './QualityDrop';
+import QualitiesList from './QualitiesList';
 
 const RareAccessory = () => {
   const [selectedQuality, setSelectedQuality] = useState(armorQualities[0]);
@@ -60,17 +61,15 @@ const RareAccessory = () => {
           <ul className="list-group">
             <li className="list-group-item"><strong>Name:</strong> {combinedAccessory.name}</li>
             <li className="list-group-item"><strong>Cost:</strong> {combinedAccessory.cost}</li>
-            <li className="list-group-item">
-              <strong>Qualities:</strong>
-              <ul>
-                {combinedAccessory.qualities.map(q => (
-                  <li key={q.name}>
-                    {q.name}: {q.effect}
-                  </li>
-                ))}
-              </ul>
-            </li>
+            <QualitiesList
+            combinedQualities={combinedAccessory.qualities}
+            setCombinedQualities={(newQualities) => {
+              setCombinedAccessory({ ...combinedAccessory, qualities: newQualities })
+            }
+            }
+          />
           </ul>
+        
           <button className="btn btn-primary mt-2" onClick={copyToClipboard}>
             Copy to Clipboard
           </button>

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import baseArmors from "./baseArmor.json"
 import armorQualities from "./armorQualities.json"
 import QualityDropdown from './QualityDrop';
+import QualitiesList from './QualitiesList';
+
 
 const RareDefensiveGear = () => {
     const [selectedBase, setSelectedBase] = useState(null);
@@ -92,16 +94,12 @@ const RareDefensiveGear = () => {
                         <li className="list-group-item"><strong>Cost:</strong> {combinedArmor.cost}</li>
                         <li className="list-group-item"><strong>Initiative:</strong> {combinedArmor.initiative}</li>
                         <li className="list-group-item"><strong>Magic Defense:</strong> {combinedArmor.magicDefense}</li>
-                        <li className="list-group-item">
-                            <strong>Qualities:</strong>
-                            <ul>
-                                {combinedArmor.qualities.map(q => (
-                                    <li key={q.name}>
-                                        {q.name}: {q.effect}
-                                    </li>
-                                ))}
-                            </ul>
-                        </li>
+                        <QualitiesList
+                          combinedQualities={combinedArmor.qualities}
+                          setCombinedQualities={(newQualities) => {
+                            setCombinedArmor({ ...combinedArmor, qualities: newQualities });
+                          }}
+                        />
                     </ul>
                     <button className="btn btn-primary mt-2" onClick={copyToClipboard}>
                         Copy to Clipboard

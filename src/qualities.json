@@ -1,8 +1,48 @@
 [
     {
-        "name": "No Quality",
-        "cost": 0,
-        "description":"The weapon has no additional effect"
+        "name": "Antistatus",
+        "cost": 500,
+        "description": "You are immune to a single status effect."
+    },
+    {
+        "name": "Resistance",
+        "cost": 700,
+        "description": "You have Resistance to a single damage type (not physical damage)."
+    },
+    {
+        "name": "Amulet",
+        "cost": 800,
+        "description": "You gain a +1 bonus to Magic Defense."
+    },
+    {
+        "name": "Bulwark",
+        "cost": 800,
+        "description": "You gain a +1 bonus to Defense."
+    },
+    {
+        "name": "Dual Resistance",
+        "cost": 1000,
+        "description": "You have Resistance to two damage types (not physical damage)."
+    },
+    {
+        "name": "Swordbreaker",
+        "cost": 1000,
+        "description": "You have Resistance to physical damage."
+    },
+    {
+        "name": "Immunity",
+        "cost": 1500,
+        "description": "You have Immunity to a single damage type (not physical damage)."
+    },
+    {
+        "name": "Omnishield",
+        "cost": 2000,
+        "description": "You gain a +1 bonus to Defense and Magic Defense."
+    },
+    {
+        "name": "Perfect Health",
+        "cost": 2000,
+        "description": "You are immune to all status effects."
     },
     {
         "name": "Magical",
@@ -38,5 +78,60 @@
         "name": "Status Plus",
         "cost": 2000,
         "description": "Each target hit by the weapon suffers (choose one: enraged, poisoned)."
+    },
+    {
+        "name": "Spiteful",
+        "cost": 500,
+        "description": "The weapon deals 5 damage if you miss your Accuracy check."
+    },
+    {
+        "name": "Lifestealing",
+        "cost": 1000,
+        "description": "When you hit with this weapon, you regain 5 HP."
+    },
+    {
+        "name": "Opportunist",
+        "cost": 500,
+        "description": "The weapon deals 5 extra damage to creatures in crisis."
+    },
+    {
+        "name": "Slaughter",
+        "cost": 500,
+        "description": "If your attack targets more than one creature, deal 2 additional damage for each creature that you hit."
+    },
+    {
+        "name": "Lifebane",
+        "cost": 500,
+        "description": "The weapon deals 10 extra damage to creatures at full health."
+    },
+    {
+        "name": "Wingcutter",
+        "cost": 500,
+        "description": "The weapon deals 5 damage to flying creatures."
+    },
+    {
+        "name": "Empower Element",
+        "cost": 500,
+        "description": "Choose an element when you acquire this weapon. Damage from spells with that element deals +2 damage."
+    },
+    {
+        "name": "Implement",
+        "cost": 800,
+        "description": "Count as an arcane implement."
+    },
+    {
+        "name": "Guard Piercer",
+        "cost": 800,
+        "description": "This weapon deals 10 extra damage to creatures who are guarding. Apply the damage after accounting for elemental affinities."
+    },
+    {
+        "name": "Mind Drain",
+        "cost": 800,
+        "description": "Whenever you hit one or more creatures with this weapon, each of them loses 10 Mind Points."
+    },
+    {
+        "name": "Taunting",
+        "cost": 800,
+        "description": "You gain +2 bonus to Accuray Checks and Magic checks against enraged targets."
     }
 ]
