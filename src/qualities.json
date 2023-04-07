@@ -1,5 +1,10 @@
 [
     {
+        "name":"No Quality",
+        "cost": 0,
+        "description":"Does nothing"
+    },
+    {
         "name": "Antistatus",
         "cost": 500,
         "description": "You are immune to a single status effect."

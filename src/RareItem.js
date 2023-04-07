@@ -5,6 +5,7 @@ import elementsData from './elements.json';
 import QualityDropdown from './QualityDrop';
 import QualitiesList from './QualitiesList';
 
+const LOCAL_STORAGE_KEY = 'rare-weapons';
 
 const CreateRareItem = () => {
     const [formValues, setFormValues] = useState({
@@ -23,11 +24,133 @@ const CreateRareItem = () => {
             stat2: 'DEX',
         },
 
+
     });
+
+    
+
+    // for saving/loading from localstorage
+    const [savedItems, setSavedItems] = useState([]);
+    const [loadedItemIndex, setLoadedItemIndex] = useState(null);
 
     const [totalCost, setTotalCost] = useState(0);
     const [modifiedDamage, setModifiedDamage] = useState('');
     const [combinedQualities, setCombinedQualities] = useState([]);
+    const [alreadyHaveAccuracyBonus, setAlreadyHaveAccuracyBonus] = useState(false);
+
+    const loadFromLocalStorage = (index) => {
+        if (index === "") {
+            setLoadedItemIndex(null);
+            return;
+        }
+        console.log(savedItems[index]);
+        const { combinedQualities, ...loadedItem} = savedItems[index];
+        setFormValues(loadedItem);
+        
+        setTimeout(function(){
+               // updated combined qualities after the form has been set
+        setCombinedQualities(combinedQualities);
+
+        },
+        200)
+     
+    
+
+        setLoadedItemIndex(index);
+    };
+
+    const saveToLocalStorage = () => {
+        const currentSavedItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+
+        const toSave =   JSON.parse(JSON.stringify(formValues));
+        toSave.combinedQualities = combinedQualities;
+      
+
+        if (loadedItemIndex !== null) {
+            // Update the existing item in the local 
+            currentSavedItems[loadedItemIndex] = toSave;
+          
+        } else {
+            // Add a new item to the local storage
+            currentSavedItems.push(toSave);
+        }
+
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(currentSavedItems));
+        setSavedItems(currentSavedItems);
+    };
+
+
+    const deleteFromLocalStorage = () => {
+        if (loadedItemIndex === null) {
+            alert("Please load an item before attempting to delete it.");
+            return;
+        }
+
+        const currentSavedItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+        currentSavedItems.splice(loadedItemIndex, 1);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(currentSavedItems));
+        setSavedItems(currentSavedItems);
+        setLoadedItemIndex(null);
+        alert("Item deleted from local storage.");
+    };
+
+    // Add an effect to initialize the saved items from local storage
+    useEffect(() => {
+        const currentSavedItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+        setSavedItems(currentSavedItems);
+    }, []);
+
+    const escapeCSVValue = (value) => {
+        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      };
+
+      const flattenObject = (obj, prefix = '') => {
+        const flattened = {};
+      
+        for (const key in obj) {
+          if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+            Object.assign(flattened, flattenObject(obj[key], `${prefix}${key}.`));
+          } else {
+            flattened[`${prefix}${key}`] = obj[key];
+          }
+        }
+      
+        return flattened;
+      };
+      
+      const formatQuality = (quality) => {
+        return `${quality.name}: ${quality.effect}`;
+      };
+      
+
+      const exportToCSV = () => {
+        const currentSavedItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+      
+        if (currentSavedItems.length === 0) {
+          alert("No items found in local storage to export.");
+          return;
+        }
+
+        const formattedItems = currentSavedItems.map(item => {
+
+          const {combinedQualities, ...toSave} = item;
+
+          const flattened = flattenObject(toSave);
+          flattened.qualities = item.combinedQualities.map(formatQuality).join('|');
+          return flattened;
+        });
+      
+        const header = Object.keys(formattedItems[0]).map(escapeCSVValue).join(',') + '\n';
+        const csvData = formattedItems.map(item => Object.values(item).map(escapeCSVValue).join(',')).join('\n');
+        const csv = header + csvData;
+      
+        navigator.clipboard.writeText(csv)
+          .then(() => alert("CSV data copied to clipboard."))
+          .catch(() => alert("Failed to copy CSV data to clipboard."));
+      };
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -52,7 +175,7 @@ const CreateRareItem = () => {
 
     const handleQualitySelection = (quality) => {
         setFormValues((prevValues) => ({ ...prevValues, quality: quality.name }));
-      };
+    };
 
     const selectedBaseItem = baseItemsData.find(
         (item) => item.name === formValues.baseItem
@@ -61,12 +184,6 @@ const CreateRareItem = () => {
     const selectedQuality = qualitiesData.find(
         (quality) => quality.name === formValues.quality
     )
-
-    const updateCombinedQualitiesDescription = (index) => {
-
-    }
-
-    
 
     const getAttributesFromAccuracy = (accuracyStr) => {
         return accuracyStr.split(' + ').map((attr) => attr.trim());
@@ -153,9 +270,7 @@ const CreateRareItem = () => {
 
         // if there is a quality, and it is not "No Quality"
         // add the quality to the list of quality effects
-        console.log(selectedBaseItem);
         if (selectedBaseItem.qualities && selectedBaseItem.qualities !== 'No Quality') {
-            console.log("adding base item qualities")
             qualitiyEffects.push(...selectedBaseItem.qualities.map((quality) => {
                 return {
                     "name": quality.name,
@@ -178,11 +293,12 @@ const CreateRareItem = () => {
             ...prevValues,
             modifiers: {
                 ...prevValues.modifiers,
-                accuracyBonus: accuracyBonus
-            },
+            }
         }));
 
         setCombinedQualities(qualitiyEffects);
+
+        setAlreadyHaveAccuracyBonus(accuracyBonus);
 
     }, [selectedBaseItem, selectedQuality]);
 
@@ -240,7 +356,7 @@ const CreateRareItem = () => {
                             <label htmlFor="baseItem">Base Item:</label>
                             <select
                                 name="baseItem"
-                                value={formValues.baseItem.name}
+                                value={formValues.baseItem}
                                 onChange={handleInputChange}
                                 className="form-control"
                                 id="baseItem"
@@ -314,7 +430,7 @@ const CreateRareItem = () => {
                                 className="form-check-input"
                                 id="accuracyBonus"
                             />
-                            <label className="form-check-label" htmlFor="accuracyBonus">
+                            <label className="form-check-label" htmlFor="accuracyBonus" disabled={alreadyHaveAccuracyBonus}>
                                 +1 Accuracy Bonus (+100 zenit)
                             </label>
                         </div>
@@ -381,16 +497,41 @@ const CreateRareItem = () => {
                                 <li className="list-group-item">Hands: {selectedBaseItem.hands}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Element: {formValues.damageType}</li>
-                                 <QualitiesList
+                                <QualitiesList
                                     setCombinedQualities={setCombinedQualities}
                                     combinedQualities={combinedQualities}
-                                 />
+                                />
                                 <li className="list-group-item">Base Item: {selectedBaseItem.name}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Total Cost: {totalCost} zenit</li>
 
                             </ul>
                             <button className="mt-3" onClick={copyStateToClipboard}>Copy State to Clipboard</button>
+                            <button className="mt-3 ml-3" onClick={saveToLocalStorage}>
+                                Save to Local Storage
+                            </button>
+                            <div className="form-group mt-3">
+                                <label htmlFor="savedItems">Load from Local Storage:</label>
+                                <select
+                                    name="savedItems"
+                                    onChange={(e) => loadFromLocalStorage(e.target.value)}
+                                    className="form-control"
+                                    id="savedItems"
+                                >
+                                    <option value="">Select a saved item</option>
+                                    {savedItems.map((item, index) => (
+                                        <option key={index} value={index}>
+                                            {item.itemName}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <button className="mt-3 ml-3" onClick={deleteFromLocalStorage}>
+                                    Delete from Local Storage
+                                </button>
+
+                                <button classname="mt-3 ms-3" onClick={exportToCSV}>Exported Save Items</button>
+                            </div>
 
                         </div>
                     </div>
