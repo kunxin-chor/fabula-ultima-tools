@@ -5,25 +5,25 @@
       "defense": "+0",
       "magicDefense": "+0",
       "cost": 0,
-      "initiative": "-",
+      "initiative": "0",
       "quality": "No Quality"
     },
     {
       "name": "Silk Shirt",
       "martial": false,
       "defense": "+0",
-      "magicDefense": "+0",
+      "magicDefense": "+2",
       "cost": 100,
-      "initiative": "+2",
+      "initiative": "-1",
       "quality": "No Quality"
     },
     {
       "name": "Travel Garb",
       "martial": false,
       "defense": "+1",
-      "magicDefense": "+0",
+      "magicDefense": "+1",
       "cost": 100,
-      "initiative": "+1",
+      "initiative": "-1",
       "quality": "No Quality"
     },
     {
@@ -69,9 +69,9 @@
       "name": "Runic Plate",
       "martial": true,
       "defense": "11",
-      "magicDefense": "+0",
+      "magicDefense": "+1",
       "cost": 250,
-      "initiative": "+1",
+      "initiative": "-3",
       "quality": "No Quality"
     },
     {
