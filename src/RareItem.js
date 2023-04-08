@@ -27,7 +27,9 @@ const CreateRareItem = () => {
 
     });
 
-    
+    // for randomizing the items
+    const [maxCostThreshold, setMaxCostThreshold] = useState(1000); // Default to 1000, you can change this value.
+
 
     // for saving/loading from localstorage
     const [savedItems, setSavedItems] = useState([]);
@@ -44,17 +46,17 @@ const CreateRareItem = () => {
             return;
         }
         console.log(savedItems[index]);
-        const { combinedQualities, ...loadedItem} = savedItems[index];
+        const { combinedQualities, ...loadedItem } = savedItems[index];
         setFormValues(loadedItem);
-        
-        setTimeout(function(){
-               // updated combined qualities after the form has been set
-        setCombinedQualities(combinedQualities);
+
+        setTimeout(function () {
+            // updated combined qualities after the form has been set
+            setCombinedQualities(combinedQualities);
 
         },
-        200)
-     
-    
+            200)
+
+
 
         setLoadedItemIndex(index);
     };
@@ -62,14 +64,14 @@ const CreateRareItem = () => {
     const saveToLocalStorage = () => {
         const currentSavedItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
 
-        const toSave =   JSON.parse(JSON.stringify(formValues));
+        const toSave = JSON.parse(JSON.stringify(formValues));
         toSave.combinedQualities = combinedQualities;
-      
+
 
         if (loadedItemIndex !== null) {
             // Update the existing item in the local 
             currentSavedItems[loadedItemIndex] = toSave;
-          
+
         } else {
             // Add a new item to the local storage
             currentSavedItems.push(toSave);
@@ -102,55 +104,55 @@ const CreateRareItem = () => {
 
     const escapeCSVValue = (value) => {
         if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
-          return `"${value.replace(/"/g, '""')}"`;
+            return `"${value.replace(/"/g, '""')}"`;
         }
         return value;
-      };
+    };
 
-      const flattenObject = (obj, prefix = '') => {
+    const flattenObject = (obj, prefix = '') => {
         const flattened = {};
-      
-        for (const key in obj) {
-          if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-            Object.assign(flattened, flattenObject(obj[key], `${prefix}${key}.`));
-          } else {
-            flattened[`${prefix}${key}`] = obj[key];
-          }
-        }
-      
-        return flattened;
-      };
-      
-      const formatQuality = (quality) => {
-        return `${quality.name}: ${quality.effect}`;
-      };
-      
 
-      const exportToCSV = () => {
+        for (const key in obj) {
+            if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                Object.assign(flattened, flattenObject(obj[key], `${prefix}${key}.`));
+            } else {
+                flattened[`${prefix}${key}`] = obj[key];
+            }
+        }
+
+        return flattened;
+    };
+
+    const formatQuality = (quality) => {
+        return `${quality.name}: ${quality.effect}`;
+    };
+
+
+    const exportToCSV = () => {
         const currentSavedItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
-      
+
         if (currentSavedItems.length === 0) {
-          alert("No items found in local storage to export.");
-          return;
+            alert("No items found in local storage to export.");
+            return;
         }
 
         const formattedItems = currentSavedItems.map(item => {
 
-          const {combinedQualities, ...toSave} = item;
+            const { combinedQualities, ...toSave } = item;
 
-          const flattened = flattenObject(toSave);
-          flattened.qualities = item.combinedQualities.map(formatQuality).join('|');
-          return flattened;
+            const flattened = flattenObject(toSave);
+            flattened.qualities = item.combinedQualities.map(formatQuality).join('|');
+            return flattened;
         });
-      
+
         const header = Object.keys(formattedItems[0]).map(escapeCSVValue).join(',') + '\n';
         const csvData = formattedItems.map(item => Object.values(item).map(escapeCSVValue).join(',')).join('\n');
         const csv = header + csvData;
-      
+
         navigator.clipboard.writeText(csv)
-          .then(() => alert("CSV data copied to clipboard."))
-          .catch(() => alert("Failed to copy CSV data to clipboard."));
-      };
+            .then(() => alert("CSV data copied to clipboard."))
+            .catch(() => alert("Failed to copy CSV data to clipboard."));
+    };
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -200,11 +202,47 @@ const CreateRareItem = () => {
         }));
     };
 
-    const calculateCost = useCallback(() => {
-
-        // Modify the damage based on the increaseDamageBonus checkbox
-        let damage = selectedBaseItem.damage;
-        let damageValue = parseInt(damage.match(/\d+/)[0], 10);
+    const calculateCost = (inputFormValues, inputSelectedBaseItem, inputSelectedQuality) => {
+        if (!inputSelectedBaseItem) {
+            return 0;
+        }
+    
+       
+    
+        let cost = inputSelectedBaseItem.cost;
+    
+        if (inputFormValues.damageType !== 'physical') {
+            cost += 100;
+        }
+    
+        cost += inputSelectedQuality.cost;
+    
+        if (inputFormValues.modifiers.oneHanded) {
+            cost += 100;
+        }
+    
+        if (inputFormValues.modifiers.twoHanded) {
+            cost += 100;
+        }
+    
+        if (inputFormValues.modifiers.accuracyBonus) {
+            cost += 100;
+        }
+    
+        if (inputFormValues.modifiers.damageIncrease) {
+            cost += 200;
+        }
+    
+        if (inputFormValues.accuracyCheck.stat1 === inputFormValues.accuracyCheck.stat2) {
+            cost += 50;
+        }
+        return cost;
+    
+    };
+    
+    const recalculateDamage = useCallback(() => {
+        let damageValue = parseInt(selectedBaseItem.damage.match(/\d+/)[0], 10);
+     
         if (formValues.modifiers.damageIncrease) {
             damageValue += 4;
         }
@@ -214,52 +252,84 @@ const CreateRareItem = () => {
         if (formValues.modifiers.oneHanded) {
             damageValue -= 4;
         }
+        setModifiedDamage(damageValue);
+    }, [formValues.modifiers, selectedBaseItem]);
 
-        damage = damage.replace(/\d+/, damageValue.toString());
-        setModifiedDamage(damage);
-
-        // If the base item is not found, return early
-        if (!selectedBaseItem) {
-            return;
-        }
-
-        let cost = selectedBaseItem.cost;
-
-        if (formValues.damageType !== 'physical') {
-            cost += 100;
-        }
-
-        cost += selectedQuality.cost;
-
-        if (formValues.modifiers.oneHanded) {
-            cost += 100;
-        }
-
-        if (formValues.modifiers.twoHanded) {
-            cost += 100;
-        }
-
-        if (formValues.modifiers.accuracyBonus) {
-            cost += 100;
-        }
-
-        if (formValues.modifiers.damageIncrease) {
-            cost += 200;
-        }
-
-        if (formValues.accuracyCheck.stat1 === formValues.accuracyCheck.stat2) {
-            cost += 50;
-        }
-
-        setTotalCost(cost);
+    const calculateAndSetCost = useCallback(() => {
+        const calculatedCost = calculateCost(formValues, selectedBaseItem, selectedQuality);
+        setTotalCost(calculatedCost);
+       
+        return calculatedCost;
     }, [formValues, selectedBaseItem, selectedQuality]);
+
+
+    const randomizeOptions = (e) => {
+        e.preventDefault();
+        let randomizedOptions = { ...formValues.modifiers };
+        let randomQualityName, randomDamageType;
+        let randomizedItemCost = totalCost;
+        let budgetLeft = maxCostThreshold;
+        let attempts = 0;
+ 
+        do {
+
+       
+
+            randomizedOptions = {
+                oneHanded: Math.random() < 0.5,
+                twoHanded: selectedBaseItem.hands === "Two-Handed" ? false : Math.random() < 0.5,
+                accuracyBonus: Math.random() < 0.5,
+                damageIncrease: Math.random() < 0.5,
+            };
+
+            if (Math.random() < 0.25) {
+                randomQualityName = qualitiesData[Math.floor(Math.random() * qualitiesData.length)].name;
+            } else {
+                randomQualityName = "No Quality";
+            }
+            if (Math.random() < 0.25) {
+                randomDamageType = elementsData[Math.floor(Math.random() * elementsData.length)].name;
+            } else{
+                randomDamageType = "physical";
+            }
+                   
+            // Recalculate the item cost based on the randomized options
+            let randomQuality = qualitiesData.find(
+                (quality) => quality.name === randomQualityName
+            );          
+            const clonedFormValues = {
+                ...formValues, 
+                modifiers:{...randomizedOptions},
+                damageType: randomDamageType ? randomDamageType : formValues.damageType,
+            };
+            console.log("quality=", randomQuality);
+            randomizedItemCost = calculateCost(clonedFormValues, selectedBaseItem, randomQuality);         
+            console.log("cost=", randomizedItemCost);
+
+            attempts++;
+            if (attempts > 1000) {
+                alert('Unable to find a valid combination within the budget. Please try again or increase the budget.');
+                return;
+            }
+        } while (randomizedItemCost > budgetLeft);
+      
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            modifiers: randomizedOptions,
+            quality: randomQualityName ? randomQualityName : prevValues.quality,
+            damageType: randomDamageType ? randomDamageType : prevValues.damageType,
+        }));
+    };
 
 
     // recalculate the cost if the formvalues have changed
     useEffect(() => {
-        calculateCost();
-    }, [calculateCost]);
+        calculateAndSetCost();
+    }, [calculateAndSetCost]);
 
+    useEffect(() => {
+        recalculateDamage();
+    }, [recalculateDamage]);
 
     useEffect(() => {
         const attributes = getAttributesFromAccuracy(selectedBaseItem.accuracy);
@@ -367,6 +437,21 @@ const CreateRareItem = () => {
                                     </option>
                                 ))}
                             </select>
+                        </div>
+                        <div className="form-group mt-3">
+
+                            <label htmlFor="maxCostThreshold">Maximum Cost Threshold:</label>
+                            <input
+                                type="number"
+                                name="maxCostThreshold"
+                                value={maxCostThreshold}
+                                onChange={(e) => setMaxCostThreshold(e.target.value)}
+                                className="form-control"
+                                id="maxCostThreshold"
+                            />
+                            <button className="mt-3 ml-3" onClick={randomizeOptions}>
+                                Randomize Options
+                            </button>
                         </div>
                         <div className="form-group">
                             <label htmlFor="damageType">Damage Type:</label>

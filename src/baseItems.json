@@ -72,22 +72,9 @@
         "hands": "One-Handed",
         "accuracy": "DEX + MIG",
         "element": "Physical",
-        "damage": "【HR + 0】",
-        "qualities": "Automatically equipped in each empty hand slot",
+        "damage": "【HR + 0】",        
         "cost": 0
-    },
-    {
-        "name": "Improvised (Melee)",
-        "martial": "Yes",
-        "category": "Brawling",
-        "reach": "Melee",
-        "hands": "One-Handed",
-        "accuracy": "DEX + MIG",
-        "element": "Physical",
-        "damage": "【HR + 2】",
-        "qualities": "Breaks after the attack",
-        "cost": 0
-    },
+    },  
     {
         "name": "Iron Knuckle",
         "martial": "Yes",
