@@ -72,6 +72,21 @@ function npcReducer(state, action) {
                 traits: updatedTraits
             }
         }
+
+        case "UPDATE_IMPROVED_DEFENSE": {
+            const { index, value } = action.payload;
+            const improved_defenses = [...state.skillOptions.improved_defenses];
+            improved_defenses[index] = value;
+          
+            return {
+              ...state,
+              skillOptions: {
+                ...state.skillOptions,
+                improved_defenses,
+              },
+            };
+          }
+
         default:
             return state;
     }

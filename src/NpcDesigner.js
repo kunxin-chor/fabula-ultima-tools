@@ -28,11 +28,11 @@ const initialState = {
     maxHP: 0,
     crisisScore: 0,
     maxMP: 0,
-    improvedDefense:{
+    improvedDefense: {
         defenseBonus: 0,
-        magicDefenseBonus: 0,    
+        magicDefenseBonus: 0,
         skillPointCost: 0
-    },   
+    },
     accuracyBonus: 0,
     magicBonus: 0,
     damageBonus: 0,
@@ -41,7 +41,27 @@ const initialState = {
         armor: {},
         shield: {}
     },
-    baseSkillPoints: 0
+    baseSkillPoints: 0,
+    skillOptions: {
+        "specialized": {
+            "accuracy": false,
+            "magic": false,
+            "opposed-checks": false
+        },
+        "improved_defenses": [
+            {
+                "defense": 0,
+                "magic-defense": 0
+            },
+            {
+                "defense": 0,
+                "magic-defense": 0
+            }
+        ],
+        "improved_hit_points": 0,
+        "improved_initative": 0,
+        "use_equipment": false
+    }
 };
 
 
@@ -59,17 +79,17 @@ function NpcDesigner() {
 
     function getMaxSkillPoints(level, elementalAffinities, baseSkillPoints) {
         const skillPointsFromLevel = Math.floor(level / 10);
-    
+
         const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
-          (affinity) => affinity === "vulnerable"
-        ).length;        
+            (affinity) => affinity === "vulnerable"
+        ).length;
         return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities;
-      }  
+    }
 
     const maxSkillPoints = useMemo(
         () => getMaxSkillPoints(state.level, state.elementalAffinities, state.baseSkillPoints),
         [state.level, state.elementalAffinities, state.baseSkillPoints]
-      );
+    );
 
     return (
         <div className="container">
@@ -204,6 +224,46 @@ function NpcDesigner() {
             {/* Skills */}
             <h2>Skills</h2>
             <p>Max Skill Points:{maxSkillPoints}</p>
+
+            {/* Improved Defenses */}
+            {/* Improved Defenses */}
+            <h3>Improved Defenses</h3>
+            {state.skillOptions.improved_defenses.map((defenseOption, index) => (
+                <div key={index} className="d-flex align-items-center">
+                    <label htmlFor={`defenseOption${index}`} className="me-2">
+                        Defense Option {index + 1}:
+                    </label>
+                    <select
+                        className="form-control"
+                        id={`defenseOption${index}`}
+                        name={`defenseOption${index}`}
+                        value={JSON.stringify(defenseOption[index])}
+                        onChange={(e) => {
+                            const value = JSON.parse(e.target.value);
+                            dispatch({
+                                type: "UPDATE_IMPROVED_DEFENSE",
+                                payload: {
+                                    index,
+                                    value,
+                                },
+                            });
+                        }}
+                        disabled={index === 1 && state.skillOptions.improved_defenses[0].defense === 0}
+                    >
+                        <option value='{"defense": 0, "magic-defense": 0}'>
+                            No Option Selected
+                        </option>
+                        <option value='{"defense": 1, "magic-defense": 2}'>
+                            +1 Defense, +2 Magic Defense
+                        </option>
+                        <option value='{"defense": 2, "magic-defense": 1}'>
+                            +2 Defense, +1 Magic Defense
+                        </option>
+                    </select>
+                </div>
+            ))}
+
+
         </div>
     );
 }

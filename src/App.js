@@ -25,6 +25,9 @@ function App() {
               <li className="nav-item">
                 <Link className="nav-link" to="/accessories">Accessories</Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/npc">NPCs</Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -35,6 +38,7 @@ function App() {
           <Route path="/" element={<RareItem />} />
           <Route path="/defensive-gear" element={<RareDefensiveGear />} />
           <Route path="/accessories" element={<RareAccessory />} />
+          <Route path="/npc" element={<NpcDesigner/>}/>
         </Routes>
       </div>
     </Router>
