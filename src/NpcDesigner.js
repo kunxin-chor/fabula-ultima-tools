@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useMemo } from 'react';
+import React, { useReducer, useMemo } from 'react';
 import npcReducer from './NpcDesigner/NpcReducer';
 import "./NpcDesigner/npc.css"
 import speices from "./NpcDesigner/species.json"
@@ -76,6 +76,35 @@ function NpcDesigner() {
             payload: { name, value },
         });
     };
+
+    function getSkillPointsLeft(level, elementalAffinities, baseSkillPoints) {
+        const skillPointsFromLevel = Math.floor(level / 10);
+      
+        const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "vulnerable"
+        ).length;
+      
+        const resistantCost = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "resistant"
+        ).length * 0.5;
+      
+        const immuneCost = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "immune"
+        ).length;
+      
+        const absorbCost = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "absorb"
+        ).length;
+      
+        const totalCost = resistantCost + immuneCost + absorbCost;
+      
+        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalCost;
+      }
+      
+      const skillPointsLeft = useMemo(
+        () => getSkillPointsLeft(state.level, state.elementalAffinities, state.baseSkillPoints),
+        [state.level, state.elementalAffinities, state.baseSkillPoints]
+      );
 
     function getMaxSkillPoints(level, elementalAffinities, baseSkillPoints) {
         const skillPointsFromLevel = Math.floor(level / 10);
@@ -226,7 +255,6 @@ function NpcDesigner() {
             <p>Max Skill Points:{maxSkillPoints}</p>
 
             {/* Improved Defenses */}
-            {/* Improved Defenses */}
             <h3>Improved Defenses</h3>
             {state.skillOptions.improved_defenses.map((defenseOption, index) => (
                 <div key={index} className="d-flex align-items-center">
@@ -263,6 +291,74 @@ function NpcDesigner() {
                 </div>
             ))}
 
+            {/* Specialized */}
+            <h3>Specialized</h3>
+            <div className="form-check">
+                {Object.entries(state.skillOptions.specialized).map(([key, value]) => (
+                    <div key={key} className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={key}
+                            name={key}
+                            checked={value}
+                            onChange={(e) => {
+                                dispatch({
+                                    type: "UPDATE_SPECIALIZED",
+                                    payload: {
+                                        option: key,
+                                        value: e.target.checked,
+                                    },
+                                });
+                            }}
+                        />
+                        <label className="form-check-label" htmlFor={key}>
+                            {key.charAt(0).toUpperCase() + key.slice(1)}
+                        </label>
+                    </div>
+                ))}
+            </div>
+            {/* Improved Hit Points */}
+            <div className="form-group">
+                <label htmlFor="improved_hit_points">Improved Hit Points:</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    id="improved_hit_points"
+                    name="improved_hit_points"
+                    value={state.skillOptions.improved_hit_points}
+                    min="0"
+                    onChange={(e) => {
+                        dispatch({
+                            type: "UPDATE_IMPROVED_HIT_POINTS",
+                            payload: {
+                                value: parseInt(e.target.value),
+                            },
+                        });
+                    }}
+                />
+            </div>
+
+            {/* Improved Initiative */}
+            <div className="form-group">
+                <label htmlFor="improved_initiative">Improved Initiative:</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    id="improved_initiative"
+                    name="improved_initiative"
+                    value={state.skillOptions.improved_initative}
+                    min="0"
+                    onChange={(e) => {
+                        dispatch({
+                            type: "UPDATE_IMPROVED_INITIATIVE",
+                            payload: {
+                                value: parseInt(e.target.value),
+                            },
+                        });
+                    }}
+                />
+            </div>
 
         </div>
     );
