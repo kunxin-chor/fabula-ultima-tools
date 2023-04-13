@@ -170,51 +170,80 @@ function NpcDesigner() {
 
     return (
         <div className="container">
-            <div className="form-group">
-                <label>Name:</label>
-                <input type="text" name="name" className="form-control" value={state.name} onChange={handleFormChange} />
-            </div>
+            <h1 className="my-4">NPC Creation</h1>
 
-            <div className="form-group">
-                <label>Level:</label>
-                <input type="text" name="level" className="form-control" value={state.level} onChange={handleFormChange} />
+            {/* Name and Level */}
+            <div className="row">
+                <div className="col-md-6 mb-3">
+                    <div className="form-group">
+                        <label>Name:</label>
+                        <input
+                            type="text"
+                            name="name"
+                            className="form-control"
+                            value={state.name}
+                            onChange={handleFormChange}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-md-6 mb-3">
+                    <div className="form-group">
+                        <label>Level:</label>
+                        <input
+                            type="text"
+                            name="level"
+                            className="form-control"
+                            value={state.level}
+                            onChange={handleFormChange}
+                        />
+                    </div>
+                </div>
             </div>
 
             {/* Traits */}
-            <div className="form-group">
-                <label htmlFor="traits">Traits:</label>
-                {state.traits.map((t, index) => <input type="text"
-                    class="form-control"
-                    value={t}
-                    key={index}
-                    onChange={e => {
+            <div className="mb-4">
+                <h3>Traits</h3>
+                {state.traits.map((t, index) => (
+                    <div key={index} className="form-group">
+                        <input
+                            type="text"
+                            className="form-control mb-2"
+                            value={t}
+                            onChange={(e) => {
+                                dispatch({
+                                    type: "UPDATE_TRAIT_TEXT",
+                                    payload: { index, value: e.target.value },
+                                });
+                            }}
+                        />
+                    </div>
+                ))}
+                <button
+                    className="btn btn-primary"
+                    onClick={() => {
                         dispatch({
-                            type: "UPDATE_TRAIT_TEXT",
-                            payload: { index, value: e.target.value }
-                        })
+                            type: "ADD_TRAIT",
+                        });
                     }}
-                />)}
-                <button onClick={() => {
-                    dispatch({
-                        type: "ADD_TRAIT",
-                    })
-                }}>Add Trait</button>
+                >
+                    Add Trait
+                </button>
             </div>
 
             {/* Attributes */}
-            <div className="form-group">
-                <label>Attributes:</label>
-                <div className="d-flex flex-wrap">
+            <div className="mb-4">
+                <h3>Attributes</h3>
+                <div className="row">
                     {Object.entries(state.attributes).map(([key, value]) => (
-                        <div key={key} className="form-group d-flex align-items-center attribute-container">
-                            <label htmlFor={key} className="me-2">
-                                {key}:
-                            </label>
-                            <div className="d-inline-flex align-items-center">
-                                <span className="me-1">D</span>
+                        <div key={key} className="col-md-6 mb-3">
+                            <div className="form-group">
+                                <label htmlFor={key}>
+                                    {key}:
+                                </label>
                                 <input
                                     type="number"
-                                    className="form-control attribute-input"
+                                    className="form-control"
                                     id={key}
                                     name={key}
                                     value={value}
@@ -224,7 +253,7 @@ function NpcDesigner() {
                                     onChange={(e) => {
                                         const diceSize = parseInt(e.target.value);
                                         dispatch({
-                                            type: 'UPDATE_ATTRIBUTE',
+                                            type: "UPDATE_ATTRIBUTE",
                                             payload: {
                                                 attribute: key,
                                                 value: diceSize,
@@ -239,41 +268,48 @@ function NpcDesigner() {
             </div>
 
             {/* Species */}
-            <div className="form-group">
-                <label>Species:</label>
-                <select name="species" className="form-control" value={state.species} onChange={(e) => {
-                    dispatch({
-                        type: "UPDATE_SPECIES",
-                        payload: {
-                            species: e.target.value
-                        }
-                    })
-                }}>
-                    <option value="">Select a species</option>
-                    {
-                        Object.entries(speciesList).map(([key, value]) => {
-                            return <option value={key}>{value.name}</option>
-                        })
-                    }
-                </select>
+            <div className="mb-4">
+                <h3>Species</h3>
+                <div className="form-group">
+                    <select
+                        name="species"
+                        className="form-control"
+                        value={state.species}
+                        onChange={(e) => {
+                            dispatch({
+                                type: "UPDATE_SPECIES",
+                                payload: {
+                                    species: e.target.value,
+                                },
+                            });
+                        }}
+                    >
+                        <option value="">Select a species</option>
+                        {Object.entries(speciesList).map(([key, value]) => {
+                            return (
+                                <option key={key} value={key}>
+                                    {value.name}
+                                </option>
+                            );
+                        })}
+                    </select>
+                </div>
             </div>
 
             {/* Elemental Affinities */}
-            {/* For each element, if it exists inside Elemental Affinities, use its
-            value, otherwise set to "normal" */}
-            <h2>Elemental Affinities</h2>
-            <ul>
-                <li>Free Resistances: {freeResistancesLeft}</li>
-                <li>Free Immunities: {freeImmunitiesLeft}</li>
-            </ul>
-            <div className="row mt-3">
-                {elements.map(({ name: value }) => (
-                    <div key={value} className="col-sm-6 mb-2">
-                        <div className="form-group d-flex align-items-center attribute-container">
-                            <label htmlFor={value} className="me-2">
-                                {value}:
-                            </label>
-                            <div className="d-inline-flex align-items-center">
+            <div className="mb-4">
+                <h3>Elemental Affinities</h3>
+                <ul>
+                    <li>Free Resistances: {freeResistancesLeft}</li>
+                    <li>Free Immunities: {freeImmunitiesLeft}</li>
+                </ul>
+                <div className="row mt-3">
+                    {elements.map(({ name: value }) => (
+                        <div key={value} className="col-sm-6 mb-2">
+                            <div className="form-group">
+                                <label htmlFor={value}>
+                                    {value}:
+                                </label>
                                 <select
                                     className="form-control"
                                     id={value}
@@ -298,110 +334,115 @@ function NpcDesigner() {
                                 </select>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-
-            <h2>Status Affinities</h2>          
-            <div className="row">
-                {statuses.map((status, index) => (
-                    <div key={status} className="col-12 col-md-6 col-lg-4">
-                        <div className="form-group">
-                            <label htmlFor={`statusAffinity-${status}`}>
-                                {status.charAt(0).toUpperCase() + status.slice(1)}
-                            </label>
-                            <select
-                                className="form-control"
-                                id={`statusAffinity-${status}`}
-                                name={status}
-                                value={state.elementalAffinities[status] || "normal"}
-                                onChange={(event) =>
-                                    dispatch({
-                                        type: "UPDATE_AFFINITY",
-                                        payload: { affinity: status, value: event.target.value },
-                                    })
-                                }
-                            >
-                                <option value="normal">Normal</option>
-                                <option value="immune">Immune</option>
-                            </select>
+            {/* Status Affinities */}
+            <div className="mb-4">
+                <h3>Status Affinities</h3>
+                <div className="row">
+                    {statuses.map((status, index) => (
+                        <div key={status} className="col-12 col-md-6 col-lg-4">
+                            <div className="form-group">
+                                <label htmlFor={`statusAffinity-${status}`}>
+                                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                                </label>
+                                <select
+                                    className="form-control"
+                                    id={`statusAffinity-${status}`}
+                                    name={status}
+                                    value={state.elementalAffinities[status] || "normal"}
+                                    onChange={(event) =>
+                                        dispatch({
+                                            type: "UPDATE_AFFINITY",
+                                            payload: { affinity: status, value: event.target.value },
+                                        })
+                                    }
+                                >
+                                    <option value="normal">Normal</option>
+                                    <option value="immune">Immune</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-
 
             {/* Skills */}
-            <h2>Skills</h2>
-            <p>Max Skill Points:{maxSkillPoints}</p>
-            <p>Skill Points Left:{skillPointsLeft}</p>
+            <div className="mb-4">
+                <h3>Skills</h3>
+                <p>Max Skill Points:{maxSkillPoints}</p>
+                <p>Skill Points Left:{skillPointsLeft}</p>
 
-            {/* Improved Defenses */}
-            <h3>Improved Defenses</h3>
-            {state.skillOptions.improved_defenses.map((defenseOption, index) => (
-                <div key={index} className="d-flex align-items-center">
-                    <label htmlFor={`defenseOption${index}`} className="me-2">
-                        Defense Option {index + 1}:
-                    </label>
-                    <select
-                        className="form-control"
-                        id={`defenseOption${index}`}
-                        name={`defenseOption${index}`}
-                        value={JSON.stringify(defenseOption[index])}
-                        onChange={(e) => {
-                            const value = JSON.parse(e.target.value);
-                            dispatch({
-                                type: "UPDATE_IMPROVED_DEFENSE",
-                                payload: {
-                                    index,
-                                    value,
-                                },
-                            });
-                        }}
-                        disabled={index === 1 && state.skillOptions.improved_defenses[0].defense === 0}
-                    >
-                        <option value='{"defense": 0, "magic-defense": 0}'>
-                            No Option Selected
-                        </option>
-                        <option value='{"defense": 1, "magic-defense": 2}'>
-                            +1 Defense, +2 Magic Defense
-                        </option>
-                        <option value='{"defense": 2, "magic-defense": 1}'>
-                            +2 Defense, +1 Magic Defense
-                        </option>
-                    </select>
-                </div>
-            ))}
-
-            {/* Specialized */}
-            <h3>Specialized</h3>
-            <div className="form-check">
-                {Object.entries(state.skillOptions.specialized).map(([key, value]) => (
-                    <div key={key} className="form-check">
-                        <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={key}
-                            name={key}
-                            checked={value}
+                {/* Improved Defenses */}
+                <h4>Improved Defenses</h4>
+                {state.skillOptions.improved_defenses.map((defenseOption, index) => (
+                    <div key={index} className="d-flex align-items-center mb-2">
+                        <label htmlFor={`defenseOption${index}`} className="me-2">
+                            Defense Option {index + 1}:
+                        </label>
+                        <select
+                            className="form-control"
+                            id={`defenseOption${index}`}
+                            name={`defenseOption${index}`}
+                            value={JSON.stringify(defenseOption[index])}
                             onChange={(e) => {
+                                const value = JSON.parse(e.target.value);
                                 dispatch({
-                                    type: "UPDATE_SPECIALIZED",
+                                    type: "UPDATE_IMPROVED_DEFENSE",
                                     payload: {
-                                        option: key,
-                                        value: e.target.checked,
+                                        index,
+                                        value,
                                     },
                                 });
                             }}
-                        />
-                        <label className="form-check-label" htmlFor={key}>
-                            {key.charAt(0).toUpperCase() + key.slice(1)}
-                        </label>
+                            disabled={index === 1 && state.skillOptions.improved_defenses[0].defense === 0}
+                        >
+                            <option value='{"defense": 0, "magic-defense": 0}'>
+                                No Option Selected
+                            </option>
+                            <option value='{"defense":1, "magic-defense": 2}'>
+                                +1 Defense, +2 Magic Defense
+                            </option>
+                            <option value='{"defense": 2, "magic-defense": 1}'>
+                                +2 Defense, +1 Magic Defense
+                            </option>
+                        </select>
                     </div>
                 ))}
             </div>
+            {/* Specialized */}
+            <div className="mb-4">
+                <h4>Specialized</h4>
+                <div className="form-check">
+                    {Object.entries(state.skillOptions.specialized).map(([key, value]) => (
+                        <div key={key} className="form-check mb-2">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id={key}
+                                name={key}
+                                checked={value}
+                                onChange={(e) => {
+                                    dispatch({
+                                        type: "UPDATE_SPECIALIZED",
+                                        payload: {
+                                            option: key,
+                                            value: e.target.checked,
+                                        },
+                                    });
+                                }}
+                            />
+                            <label className="form-check-label" htmlFor={key}>
+                                {key.charAt(0).toUpperCase() + key.slice(1)}
+                            </label>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Improved Hit Points */}
-            <div className="form-group">
+            <div className="form-group mb-3">
                 <label htmlFor="improved_hit_points">Improved Hit Points:</label>
                 <input
                     type="number"
@@ -422,7 +463,7 @@ function NpcDesigner() {
             </div>
 
             {/* Improved Initiative */}
-            <div className="form-group">
+            <div className="form-group mb-3">
                 <label htmlFor="improved_initiative">Improved Initiative:</label>
                 <input
                     type="number"
@@ -442,10 +483,12 @@ function NpcDesigner() {
                 />
             </div>
 
-            <div className="form-group">
+            {/* Use Equipment */}
+            <div className="form-group mb-3">
                 <label htmlFor="use_equipment">Use Equipment:</label>
                 <input
                     type="checkbox"
+                    className="form-check-input"
                     id="use_equipment"
                     name="use_equipment"
                     checked={state.skillOptions.use_equipment}
@@ -457,9 +500,10 @@ function NpcDesigner() {
                     }}
                 />
             </div>
-
         </div>
     );
+
+
 }
 
 export default NpcDesigner;
