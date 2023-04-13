@@ -1,9 +1,10 @@
-import React, { useReducer, useMemo } from 'react';
+import React, { useReducer, useMemo, useCallback } from 'react';
 import npcReducer from './NpcDesigner/NpcReducer';
 import "./NpcDesigner/npc.css"
-import speices from "./NpcDesigner/species.json"
+import speciesList from "./NpcDesigner/species.json"
 import elements from "./elements.json";
 const attributes = ["DEX", "INS", "MIG", "WLP"];
+const statuses = ["enraged", "shaken", "poisoned", "weak", "dazed", "slowed"];
 
 // Define the initial state for the NPC
 const initialState = {
@@ -42,6 +43,8 @@ const initialState = {
         shield: {}
     },
     baseSkillPoints: 0,
+    freeResistances: 0,
+    freeImmunities: 0,
     skillOptions: {
         "specialized": {
             "accuracy": false,
@@ -60,7 +63,7 @@ const initialState = {
         ],
         "improved_hit_points": 0,
         "improved_initative": 0,
-        "use_equipment": false
+        "use_equipment": false,
     }
 };
 
@@ -77,34 +80,79 @@ function NpcDesigner() {
         });
     };
 
-    function getSkillPointsLeft(level, elementalAffinities, baseSkillPoints) {
+    const freeResistancesLeft = useMemo(() => {
+        return Math.max(state.freeResistances - Object.values(state.elementalAffinities).filter(
+            (affinity) => affinity === "resistant"
+        ).length, 0);
+    }, [state.elementalAffinities, state.freeResistances]);
+
+    const freeImmunitiesLeft = useMemo(() => {
+        return Math.max(state.freeImmunities - Object.values(state.elementalAffinities).filter(
+            (affinity) => affinity === "immune"
+        ).length, 0);
+    }, [state.elementalAffinities, state.freeImmunities]);
+
+    function getSkillPointsLeft(level, elementalAffinities, baseSkillPoints, skillOptions) {
         const skillPointsFromLevel = Math.floor(level / 10);
-      
+
         const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
-          (affinity) => affinity === "vulnerable"
+            (affinity) => affinity === "vulnerable"
         ).length;
-      
-        const resistantCost = Object.values(elementalAffinities).filter(
-          (affinity) => affinity === "resistant"
-        ).length * 0.5;
-      
-        const immuneCost = Object.values(elementalAffinities).filter(
-          (affinity) => affinity === "immune"
-        ).length;
-      
+
+        const extraResistances = Object.values(elementalAffinities).filter(
+            (affinity) => affinity === "resistant"
+        ).length - state.freeResistances;
+
+        const extraImmunities = (Object.values(elementalAffinities).filter(
+            (affinity) => affinity === "immune"
+        ).length - state.freeImmunities)
+
+        const resistantCost = Math.max(0, extraResistances * 0.5);
+        const immuneCost = Math.max(0, extraImmunities);
         const absorbCost = Object.values(elementalAffinities).filter(
-          (affinity) => affinity === "absorb"
+            (affinity) => affinity === "absorb"
         ).length;
-      
-        const totalCost = resistantCost + immuneCost + absorbCost;
-      
-        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalCost;
-      }
-      
-      const skillPointsLeft = useMemo(
-        () => getSkillPointsLeft(state.level, state.elementalAffinities, state.baseSkillPoints),
-        [state.level, state.elementalAffinities, state.baseSkillPoints]
-      );
+
+        // account for selected species' base elemental affinities cost as discount
+
+        const selectedSpecies = speciesList[state.species] || {
+            elementalAffinities: {}
+        };
+        const existingElementCost = Object.entries(selectedSpecies.elementalAffinities)
+            .reduce((total, [element, affinity]) => {
+                if (affinity === "resistant") {
+                    return total + 0.5;
+                } else if (affinity === "immune") {
+                    return total + 1;
+                } else if (affinity === "absorb") {
+                    return total + 1;
+                };
+                return total;
+            }, 0);
+
+
+        const totalElementalCost = resistantCost + immuneCost + absorbCost - existingElementCost;
+
+        const improvedDefenseCost = skillOptions.improved_defenses.filter(option => option.defense !== 0).length;
+
+        const specializedCost = Object.values(skillOptions.specialized).filter(value => value).length;
+
+        const improvedHitPointsCost = skillOptions.improved_hit_points;
+
+        const improvedInitiativeCost = skillOptions.improved_initative;
+
+        const useEquipmentCost = skillOptions.use_equipment ? 1 : 0;
+
+        const totalOtherCost = improvedDefenseCost + specializedCost + improvedHitPointsCost + improvedInitiativeCost + useEquipmentCost;
+
+        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalElementalCost - totalOtherCost;
+    }
+
+    const skillPointsLeft = useMemo(
+        () => getSkillPointsLeft(state.level, state.elementalAffinities, state.baseSkillPoints, state.skillOptions),
+        [state.level, state.elementalAffinities, state.baseSkillPoints, state.skillOptions]
+    );
+
 
     function getMaxSkillPoints(level, elementalAffinities, baseSkillPoints) {
         const skillPointsFromLevel = Math.floor(level / 10);
@@ -203,7 +251,7 @@ function NpcDesigner() {
                 }}>
                     <option value="">Select a species</option>
                     {
-                        Object.entries(speices).map(([key, value]) => {
+                        Object.entries(speciesList).map(([key, value]) => {
                             return <option value={key}>{value.name}</option>
                         })
                     }
@@ -214,6 +262,10 @@ function NpcDesigner() {
             {/* For each element, if it exists inside Elemental Affinities, use its
             value, otherwise set to "normal" */}
             <h2>Elemental Affinities</h2>
+            <ul>
+                <li>Free Resistances: {freeResistancesLeft}</li>
+                <li>Free Immunities: {freeImmunitiesLeft}</li>
+            </ul>
             <div className="row mt-3">
                 {elements.map(({ name: value }) => (
                     <div key={value} className="col-sm-6 mb-2">
@@ -250,9 +302,39 @@ function NpcDesigner() {
                 ))}
             </div>
 
+            <h2>Status Affinities</h2>          
+            <div className="row">
+                {statuses.map((status, index) => (
+                    <div key={status} className="col-12 col-md-6 col-lg-4">
+                        <div className="form-group">
+                            <label htmlFor={`statusAffinity-${status}`}>
+                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </label>
+                            <select
+                                className="form-control"
+                                id={`statusAffinity-${status}`}
+                                name={status}
+                                value={state.elementalAffinities[status] || "normal"}
+                                onChange={(event) =>
+                                    dispatch({
+                                        type: "UPDATE_AFFINITY",
+                                        payload: { affinity: status, value: event.target.value },
+                                    })
+                                }
+                            >
+                                <option value="normal">Normal</option>
+                                <option value="immune">Immune</option>
+                            </select>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+
             {/* Skills */}
             <h2>Skills</h2>
             <p>Max Skill Points:{maxSkillPoints}</p>
+            <p>Skill Points Left:{skillPointsLeft}</p>
 
             {/* Improved Defenses */}
             <h3>Improved Defenses</h3>
@@ -355,6 +437,22 @@ function NpcDesigner() {
                             payload: {
                                 value: parseInt(e.target.value),
                             },
+                        });
+                    }}
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="use_equipment">Use Equipment:</label>
+                <input
+                    type="checkbox"
+                    id="use_equipment"
+                    name="use_equipment"
+                    checked={state.skillOptions.use_equipment}
+                    onChange={(e) => {
+                        dispatch({
+                            type: 'TOGGLE_USE_EQUIPMENT',
+                            payload: { value: e.target.checked },
                         });
                     }}
                 />

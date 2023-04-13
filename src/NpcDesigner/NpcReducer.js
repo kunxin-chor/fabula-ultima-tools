@@ -23,6 +23,19 @@ function npcReducer(state, action) {
             }
         }
 
+        case "UPDATE_AFFINITY": {
+            const { affinity, value } = action.payload;
+            const newElementalAffinities = {
+              ...state.elementalAffinities,
+              [affinity]: value,
+            };
+          
+            return {
+              ...state,
+              elementalAffinities: newElementalAffinities,
+            };
+          }
+
         case "UPDATE_SPECIES": {
             const selectedSpecies = action.payload.species;
             const speciesData = spieces[selectedSpecies];
@@ -40,6 +53,8 @@ function npcReducer(state, action) {
                 skills: speciesData.startingSkills,
                 elementalAffinities: elementalAffinities,
                 customActions: speciesData.customActions,
+                freeResistances: speciesData.freeResistances || 0,
+                freeImmunities: speciesData.freeImmunities || 0,
 
             };
         }
@@ -102,27 +117,36 @@ function npcReducer(state, action) {
 
         case "UPDATE_IMPROVED_HIT_POINTS": {
             const { value } = action.payload;
-          
+
             return {
-              ...state,
-              skillOptions: {
-                ...state.skillOptions,
-                improved_hit_points: value,
-              },
+                ...state,
+                skillOptions: {
+                    ...state.skillOptions,
+                    improved_hit_points: value,
+                },
             };
-          }
-          
-          case "UPDATE_IMPROVED_INITIATIVE": {
+        }
+
+        case "UPDATE_IMPROVED_INITIATIVE": {
             const { value } = action.payload;
-          
+
             return {
-              ...state,
-              skillOptions: {
-                ...state.skillOptions,
-                improved_initative: value,
-              },
+                ...state,
+                skillOptions: {
+                    ...state.skillOptions,
+                    improved_initative: value,
+                },
             };
-          }
+        }
+
+        case 'TOGGLE_USE_EQUIPMENT':
+            return {
+                ...state,
+                skillOptions: {
+                    ...state.skillOptions,
+                    use_equipment: action.payload.value,
+                },
+            };
 
         default:
             return state;
