@@ -72,6 +72,58 @@ function npcReducer(state, action) {
                 traits: updatedTraits
             }
         }
+
+        case "UPDATE_IMPROVED_DEFENSE": {
+            const { index, value } = action.payload;
+            const improved_defenses = [...state.skillOptions.improved_defenses];
+            improved_defenses[index] = value;
+
+            return {
+                ...state,
+                skillOptions: {
+                    ...state.skillOptions,
+                    improved_defenses,
+                },
+            };
+        }
+
+        case "UPDATE_SPECIALIZED": {
+            const { option, value } = action.payload;
+            const specialized = { ...state.skillOptions.specialized, [option]: value };
+
+            return {
+                ...state,
+                skillOptions: {
+                    ...state.skillOptions,
+                    specialized,
+                },
+            };
+        }
+
+        case "UPDATE_IMPROVED_HIT_POINTS": {
+            const { value } = action.payload;
+          
+            return {
+              ...state,
+              skillOptions: {
+                ...state.skillOptions,
+                improved_hit_points: value,
+              },
+            };
+          }
+          
+          case "UPDATE_IMPROVED_INITIATIVE": {
+            const { value } = action.payload;
+          
+            return {
+              ...state,
+              skillOptions: {
+                ...state.skillOptions,
+                improved_initative: value,
+              },
+            };
+          }
+
         default:
             return state;
     }

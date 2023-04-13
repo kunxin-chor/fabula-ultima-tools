@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useMemo } from 'react';
+import React, { useReducer, useMemo } from 'react';
 import npcReducer from './NpcDesigner/NpcReducer';
 import "./NpcDesigner/npc.css"
 import speices from "./NpcDesigner/species.json"
@@ -28,11 +28,11 @@ const initialState = {
     maxHP: 0,
     crisisScore: 0,
     maxMP: 0,
-    improvedDefense:{
+    improvedDefense: {
         defenseBonus: 0,
-        magicDefenseBonus: 0,    
+        magicDefenseBonus: 0,
         skillPointCost: 0
-    },   
+    },
     accuracyBonus: 0,
     magicBonus: 0,
     damageBonus: 0,
@@ -41,7 +41,27 @@ const initialState = {
         armor: {},
         shield: {}
     },
-    baseSkillPoints: 0
+    baseSkillPoints: 0,
+    skillOptions: {
+        "specialized": {
+            "accuracy": false,
+            "magic": false,
+            "opposed-checks": false
+        },
+        "improved_defenses": [
+            {
+                "defense": 0,
+                "magic-defense": 0
+            },
+            {
+                "defense": 0,
+                "magic-defense": 0
+            }
+        ],
+        "improved_hit_points": 0,
+        "improved_initative": 0,
+        "use_equipment": false
+    }
 };
 
 
@@ -57,19 +77,48 @@ function NpcDesigner() {
         });
     };
 
-    function getMaxSkillPoints(level, elementalAffinities, baseSkillPoints) {
+    function getSkillPointsLeft(level, elementalAffinities, baseSkillPoints) {
         const skillPointsFromLevel = Math.floor(level / 10);
-    
+      
         const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
           (affinity) => affinity === "vulnerable"
-        ).length;        
+        ).length;
+      
+        const resistantCost = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "resistant"
+        ).length * 0.5;
+      
+        const immuneCost = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "immune"
+        ).length;
+      
+        const absorbCost = Object.values(elementalAffinities).filter(
+          (affinity) => affinity === "absorb"
+        ).length;
+      
+        const totalCost = resistantCost + immuneCost + absorbCost;
+      
+        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalCost;
+      }
+      
+      const skillPointsLeft = useMemo(
+        () => getSkillPointsLeft(state.level, state.elementalAffinities, state.baseSkillPoints),
+        [state.level, state.elementalAffinities, state.baseSkillPoints]
+      );
+
+    function getMaxSkillPoints(level, elementalAffinities, baseSkillPoints) {
+        const skillPointsFromLevel = Math.floor(level / 10);
+
+        const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
+            (affinity) => affinity === "vulnerable"
+        ).length;
         return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities;
-      }  
+    }
 
     const maxSkillPoints = useMemo(
         () => getMaxSkillPoints(state.level, state.elementalAffinities, state.baseSkillPoints),
         [state.level, state.elementalAffinities, state.baseSkillPoints]
-      );
+    );
 
     return (
         <div className="container">
@@ -204,6 +253,113 @@ function NpcDesigner() {
             {/* Skills */}
             <h2>Skills</h2>
             <p>Max Skill Points:{maxSkillPoints}</p>
+
+            {/* Improved Defenses */}
+            <h3>Improved Defenses</h3>
+            {state.skillOptions.improved_defenses.map((defenseOption, index) => (
+                <div key={index} className="d-flex align-items-center">
+                    <label htmlFor={`defenseOption${index}`} className="me-2">
+                        Defense Option {index + 1}:
+                    </label>
+                    <select
+                        className="form-control"
+                        id={`defenseOption${index}`}
+                        name={`defenseOption${index}`}
+                        value={JSON.stringify(defenseOption[index])}
+                        onChange={(e) => {
+                            const value = JSON.parse(e.target.value);
+                            dispatch({
+                                type: "UPDATE_IMPROVED_DEFENSE",
+                                payload: {
+                                    index,
+                                    value,
+                                },
+                            });
+                        }}
+                        disabled={index === 1 && state.skillOptions.improved_defenses[0].defense === 0}
+                    >
+                        <option value='{"defense": 0, "magic-defense": 0}'>
+                            No Option Selected
+                        </option>
+                        <option value='{"defense": 1, "magic-defense": 2}'>
+                            +1 Defense, +2 Magic Defense
+                        </option>
+                        <option value='{"defense": 2, "magic-defense": 1}'>
+                            +2 Defense, +1 Magic Defense
+                        </option>
+                    </select>
+                </div>
+            ))}
+
+            {/* Specialized */}
+            <h3>Specialized</h3>
+            <div className="form-check">
+                {Object.entries(state.skillOptions.specialized).map(([key, value]) => (
+                    <div key={key} className="form-check">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={key}
+                            name={key}
+                            checked={value}
+                            onChange={(e) => {
+                                dispatch({
+                                    type: "UPDATE_SPECIALIZED",
+                                    payload: {
+                                        option: key,
+                                        value: e.target.checked,
+                                    },
+                                });
+                            }}
+                        />
+                        <label className="form-check-label" htmlFor={key}>
+                            {key.charAt(0).toUpperCase() + key.slice(1)}
+                        </label>
+                    </div>
+                ))}
+            </div>
+            {/* Improved Hit Points */}
+            <div className="form-group">
+                <label htmlFor="improved_hit_points">Improved Hit Points:</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    id="improved_hit_points"
+                    name="improved_hit_points"
+                    value={state.skillOptions.improved_hit_points}
+                    min="0"
+                    onChange={(e) => {
+                        dispatch({
+                            type: "UPDATE_IMPROVED_HIT_POINTS",
+                            payload: {
+                                value: parseInt(e.target.value),
+                            },
+                        });
+                    }}
+                />
+            </div>
+
+            {/* Improved Initiative */}
+            <div className="form-group">
+                <label htmlFor="improved_initiative">Improved Initiative:</label>
+                <input
+                    type="number"
+                    className="form-control"
+                    id="improved_initiative"
+                    name="improved_initiative"
+                    value={state.skillOptions.improved_initative}
+                    min="0"
+                    onChange={(e) => {
+                        dispatch({
+                            type: "UPDATE_IMPROVED_INITIATIVE",
+                            payload: {
+                                value: parseInt(e.target.value),
+                            },
+                        });
+                    }}
+                />
+            </div>
+
         </div>
     );
 }
