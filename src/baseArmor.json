@@ -97,5 +97,53 @@
       "name": "Weak vs. Bolt",
       "effect": "WHen you take bolt damage, you take +5 more (after accounting for resistances)"
     }
+  },
+  {
+    "name": "Buckler",
+    "martial": false,
+    "defense": "+1",
+    "magicDefense": "0",
+    "initiative": "0",
+    "quality": "",
+    "cost": 50
+  },
+  {
+    "name": "Spellwood Shield",
+    "martial": false,
+    "defense": "+1",
+    "magicDefense": "0",
+    "initiative": "0",
+    "quality": "",
+    "cost": 50
+  },
+  {
+    "name": "Kite Shield (M)",
+    "martial": true,
+    "defense": "+2",
+    "magicDefense": "0",
+    "initiative": "-1",
+    "quality": "",
+    "cost": 100
+  },
+  {
+    "name": "Full Shield (M)",
+    "martial": true,
+    "defense": "+1",
+    "magicDefense": "+1",
+    "initiative": "-1",
+    "quality": "",
+    "cost": 100
+  },
+  {
+    "name": "Runic Shield (M)",
+    "martial": true,
+    "defense": "+2",
+    "magicDefense": "+2",
+    "initiative": "-2",
+    "quality": {
+      "name": "Weak vs. Psychic",
+      "effect": ""
+    },
+    "cost": 300
   }
 ]

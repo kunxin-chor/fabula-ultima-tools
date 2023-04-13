@@ -5,6 +5,9 @@ import elementsData from './elements.json';
 import QualityDropdown from './QualityDrop';
 import QualitiesList from './QualitiesList';
 
+// sort base item
+baseItemsData.sort((a, b) => a.name.localeCompare(b.name));
+
 const LOCAL_STORAGE_KEY = 'rare-weapons';
 
 const CreateRareItem = () => {
@@ -167,6 +170,14 @@ const CreateRareItem = () => {
         }));
     };
 
+    // if the base item changes and no name is given, or
+    // if the name is the same as a base item, replace it with the new base item name
+    useEffect(() => {                
+        if (formValues.itemName === '' || baseItemsData.find(item => item.name === formValues.itemName)) {        
+            setFormValues((prevValues) => ({ ...prevValues, itemName: formValues.baseItem }));
+        }
+    }, [formValues.baseItem, formValues.itemName]);
+
     const handleAccuracyCheckChange = (event) => {
         const { name, value } = event.target;
         setFormValues((prevValues) => ({
@@ -182,6 +193,8 @@ const CreateRareItem = () => {
     const selectedBaseItem = baseItemsData.find(
         (item) => item.name === formValues.baseItem
     );
+
+    console.log(selectedBaseItem);
 
     const selectedQuality = qualitiesData.find(
         (quality) => quality.name === formValues.quality
@@ -276,18 +289,18 @@ const CreateRareItem = () => {
        
 
             randomizedOptions = {
-                oneHanded: Math.random() < 0.5,
+                oneHanded: selectedBaseItem.hands === "One-Handed" ? false : Math.random() < 0.5,
                 twoHanded: selectedBaseItem.hands === "Two-Handed" ? false : Math.random() < 0.5,
                 accuracyBonus: Math.random() < 0.5,
                 damageIncrease: Math.random() < 0.5,
             };
 
-            if (Math.random() < 0.25) {
+            if (Math.random() <0.5) {
                 randomQualityName = qualitiesData[Math.floor(Math.random() * qualitiesData.length)].name;
             } else {
                 randomQualityName = "No Quality";
             }
-            if (Math.random() < 0.25) {
+            if (Math.random() < 0.5) {
                 randomDamageType = elementsData[Math.floor(Math.random() * elementsData.length)].name;
             } else{
                 randomDamageType = "physical";
@@ -579,7 +592,9 @@ const CreateRareItem = () => {
                                     {formValues.modifiers.accuracyBonus ? <span> + 1</span> : null}
                                 </li>
                                 <li className="list-group-item">Damage: {modifiedDamage}</li>
-                                <li className="list-group-item">Hands: {selectedBaseItem.hands}</li>
+                                <li className="list-group-item">Hands: {formValues.modifiers.oneHanded ? "One-Handed" :
+                                                                            formValues.modifiers.twoHanded ? "Two-handed" :
+                                                                            selectedBaseItem.hands}</li>
                                 <li className="list-group-item">Reach: {selectedBaseItem.reach}</li>
                                 <li className="list-group-item">Element: {formValues.damageType}</li>
                                 <QualitiesList

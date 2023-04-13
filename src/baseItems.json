@@ -24,6 +24,54 @@
         "cost": 100
     },
     {
+        "name": "Rod of Blasting",
+        "martial": "",
+        "category": "",
+        "reach": "Ranged",
+        "hands": "One-Handed",
+        "accuracy": "WLP + WLP",
+        "element": "Physical",
+        "damage": "【HR + 2】",
+        "qualities": "No Quality",
+        "cost": 100
+    },
+    {
+        "name": "Tome of Missiles",
+        "martial": "No",
+        "category": "Arcane",
+        "reach": "Ranged",
+        "hands": "One-Handed",
+        "accuracy": "INS + INS",
+        "element": "Physical",
+        "damage": "【HR + 2】",
+        "qualities": "No Quality",
+        "cost": 100
+    },
+    {
+        "name": "Longbow (M)",
+        "martial": true,
+        "category": "",
+        "reach": "Ranged",
+        "hands": "Two-Handed",
+        "accuracy": "DEX + DEX",
+        "element": "Physical",
+        "damage": "【HR + 12】",
+        "qualities": "No Quality",
+        "cost": 450
+    },
+    {
+        "name": "Composite Bow (M)",
+        "martial": true,
+        "category": "",
+        "reach": "Ranged",
+        "hands": "Two-Handed",
+        "accuracy": "DEX + MIG",
+        "element": "Physical",
+        "damage": "【HR + 12】",
+        "qualities": "No Quality",
+        "cost": 400
+    },
+    {
         "name": "Crossbow",
         "martial": "No",
         "category": "Bow",
@@ -72,9 +120,9 @@
         "hands": "One-Handed",
         "accuracy": "DEX + MIG",
         "element": "Physical",
-        "damage": "【HR + 0】",        
+        "damage": "【HR + 0】",
         "cost": 0
-    },  
+    },
     {
         "name": "Iron Knuckle",
         "martial": "Yes",
@@ -200,7 +248,7 @@
         "martial": "Yes",
         "category": "Sword",
         "reach": "Melee",
-        "Hands": "Two-Handed",
+        "hands": "Two-Handed",
         "accuracy": "DEX + MIG + 1",
         "element": "Physical",
         "damage": "【HR + 10】",
