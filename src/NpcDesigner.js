@@ -3,8 +3,16 @@ import npcReducer from './NpcDesigner/NpcReducer';
 import "./NpcDesigner/npc.css"
 import speciesList from "./NpcDesigner/species.json"
 import elements from "./elements.json";
+import weapons from "./baseItems.json"
+import armorShields from "./baseArmor.json"
+
 const attributes = ["DEX", "INS", "MIG", "WLP"];
 const statuses = ["enraged", "shaken", "poisoned", "weak", "dazed", "slowed"];
+
+
+// split armorShields into armors and shields array
+const armors = armorShields.filter(item => !item.name.includes("Shield"));
+const shields = armorShields.filter(item => item.name.includes("Shield"));
 
 // Define the initial state for the NPC
 const initialState = {
@@ -64,7 +72,9 @@ const initialState = {
         "improved_hit_points": 0,
         "improved_initative": 0,
         "use_equipment": false,
-    }
+    },
+    weaponAttacks: [],
+    baseAttacks: []
 };
 
 
@@ -92,7 +102,7 @@ function NpcDesigner() {
         ).length, 0);
     }, [state.elementalAffinities, state.freeImmunities]);
 
-    function getSkillPointsLeft(level, elementalAffinities, baseSkillPoints, skillOptions) {
+    const getSkillPointsLeft = useCallback((level, elementalAffinities, baseSkillPoints, skillOptions, weaponAttacks, baseAttacks) => {
         const skillPointsFromLevel = Math.floor(level / 10);
 
         const skillPointsFromVulnerabilities = Object.values(elementalAffinities).filter(
@@ -145,12 +155,35 @@ function NpcDesigner() {
 
         const totalOtherCost = improvedDefenseCost + specializedCost + improvedHitPointsCost + improvedInitiativeCost + useEquipmentCost;
 
-        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalElementalCost - totalOtherCost;
-    }
+        const weaponAttackCost = weaponAttacks.reduce((total, attack) => {
+
+            if (attack.extraDamage) {
+                total++;
+            }
+
+            total += attack.specialEffect.cost;
+            return total;
+        }, 0);
+
+        const baseAttackCost = baseAttacks.reduce((total, attack) => {
+            total += parseInt(attack.cost);
+            if (attack.extraDamage) {
+                total++;
+            }
+            return total;
+        }, 0);
+
+        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalElementalCost - totalOtherCost - weaponAttackCost - baseAttackCost;
+    }, [state.freeResistances, state.freeImmunities, state.species]);
 
     const skillPointsLeft = useMemo(
-        () => getSkillPointsLeft(state.level, state.elementalAffinities, state.baseSkillPoints, state.skillOptions),
-        [state.level, state.elementalAffinities, state.baseSkillPoints, state.skillOptions]
+        () => getSkillPointsLeft(state.level,
+            state.elementalAffinities,
+            state.baseSkillPoints,
+            state.skillOptions,
+            state.weaponAttacks,
+            state.baseAttacks),
+        [getSkillPointsLeft, state.level, state.elementalAffinities, state.baseSkillPoints, state.skillOptions, state.weaponAttacks, state.baseAttacks]
     );
 
 
@@ -167,6 +200,18 @@ function NpcDesigner() {
         () => getMaxSkillPoints(state.level, state.elementalAffinities, state.baseSkillPoints),
         [state.level, state.elementalAffinities, state.baseSkillPoints]
     );
+
+    function addWeaponAttack() {
+        dispatch({ type: "ADD_WEAPON_ATTACK", payload: { weapon: {}, extraDamage: false, specialEffect: "", specialEffectCost: 0 } });
+    }
+
+    function updateWeaponAttack(index, updatedAttack) {
+        dispatch({ type: "UPDATE_WEAPON_ATTACK", payload: { index, updatedAttack } });
+    }
+
+    function deleteWeaponAttack(index) {
+        dispatch({ type: "DELETE_WEAPON_ATTACK", payload: { index } });
+    }
 
     return (
         <div className="container">
@@ -500,6 +545,369 @@ function NpcDesigner() {
                     }}
                 />
             </div>
+
+            {/* Equipment */}
+            {state.skillOptions.use_equipment && (
+                <div className="mb-4">
+                    <h4>Equipment</h4>
+
+                    <div className="form-group mb-3">
+                        <label htmlFor="selected_armor">Armor:</label>
+                        <select
+                            className="form-control"
+                            id="selected_armor"
+                            name="selected_armor"
+                            value={JSON.stringify(state.selected_armor)}
+                            onChange={(e) => {
+                                const armor = JSON.parse(e.target.value);
+                                dispatch({
+                                    type: "UPDATE_ARMOR",
+                                    payload: { armor },
+                                });
+                            }}
+                        >
+                            <option value="">Select armor</option>
+                            {armors.map((armorItem) => (
+                                <option key={armorItem.name} value={JSON.stringify(armorItem)}>
+                                    {armorItem.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group mb-3">
+                        <label htmlFor="selected_shield">Shield:</label>
+                        <select
+                            className="form-control"
+                            id="selected_shield"
+                            name="selected_shield"
+                            value={JSON.stringify(state.selected_shield)}
+                            onChange={(e) => {
+                                const shield = JSON.parse(e.target.value);
+                                dispatch({
+                                    type: "UPDATE_SHIELD",
+                                    payload: { shield },
+                                });
+                            }}
+                        >
+                            <option value="">Select a shield</option>
+                            {shields.map((shieldItem) => (
+                                <option key={shieldItem.name} value={JSON.stringify(shieldItem)}>
+                                    {shieldItem.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
+
+            {/* Weapon Attacks */}
+            <div className="row">
+                <div className="col-md-12 mb-3">
+                    <h2 className="my-3">Weapon Attacks</h2>
+                    {state.weaponAttacks.map((weaponAttack, index) => (
+                        <div key={index} className="d-flex align-items-center mb-2">
+                            <div className="form-group me-3">
+                                <select
+                                    className="form-control"
+                                    value={JSON.stringify(weaponAttack.weapon)}
+                                    onChange={(e) => {
+                                        const weapon = JSON.parse(e.target.value);
+                                        dispatch({
+                                            type: "UPDATE_WEAPON_ATTACK_WEAPON",
+                                            payload: { index, weapon },
+                                        });
+                                    }}
+                                >
+                                    <option value="">Select a weapon</option>
+                                    {weapons.map((weapon) => (
+                                        <option
+                                            key={weapon.name}
+                                            value={JSON.stringify(weapon)}
+                                        >
+                                            {weapon.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="form-group me-3">
+                                <label className="me-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={weaponAttack.extraDamage}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: "UPDATE_WEAPON_ATTACK_EXTRA_DAMAGE",
+                                                payload: { index, extraDamage: e.target.checked },
+                                            });
+                                        }}
+                                    />
+                                    Extra Damage (+5)
+                                </label>
+                            </div>
+                            <div className="form-group me-3">
+                                <label>Special Effect:</label>
+                                <input
+                                    type="text"
+                                    className="form-control ms-2"
+                                    value={weaponAttack.specialEffect.description}
+                                    onChange={(e) => {
+                                        const description = e.target.value;
+                                        dispatch({
+                                            type: "UPDATE_WEAPON_ATTACK_SPECIAL_EFFECT_DESCRIPTION",
+                                            payload: { index, description },
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <div className="form-group me-3">
+                                <label>Effect Cost:</label>
+                                <input
+                                    type="number"
+                                    className="form-control ms-2"
+                                    value={weaponAttack.specialEffect.cost}
+                                    onChange={(e) => {
+                                        const cost = Number(e.target.value);
+                                        dispatch({
+                                            type: "UPDATE_WEAPON_ATTACK_SPECIAL_EFFECT_COST",
+                                            payload: { index, cost },
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={() =>
+                                    dispatch({ type: "REMOVE_WEAPON_ATTACK", payload: { index } })
+                                }
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => dispatch({ type: "ADD_WEAPON_ATTACK" })}
+                    >
+                        Add Weapon Attack
+                    </button>
+                </div>
+            </div>
+
+            <div className="row">
+
+
+                {/* Start */}
+                <div className="col-md-12 mb-3">
+                    <h2 className="my-3">Base Attacks</h2>
+                    {state.baseAttacks.map((baseAttack, index) => (
+                        <div key={index} className="d-flex align-items-center mb-2">
+
+                            {/* Name */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Name:</label>
+                                <input type="text" className="form-control ms-2" value={baseAttack.name} onChange={(e) => {
+                                    dispatch({
+                                        type: "UPDATE_BASE_ATTACK",
+                                        payload: {
+                                            index,
+                                            updatedBaseAttack: { name: e.target.value },
+                                        },
+                                    });
+                                }} />
+                            </div>
+
+                            {/* Stat 1 */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Stat 1:</label>
+                                <select
+                                    className="form-select ms-2"
+                                    value={baseAttack.stat1}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_BASE_ATTACK",
+                                            payload: {
+                                                index,
+                                                updatedBaseAttack: { stat1: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                >
+                                    {attributes.map((attribute) => (
+                                        <option key={attribute} value={attribute}>
+                                            {attribute}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Stat 2 */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Stat 2:</label>
+                                <select
+                                    className="form-select ms-2"
+                                    value={baseAttack.stat2}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_BASE_ATTACK",
+                                            payload: {
+                                                index,
+                                                updatedBaseAttack: { stat2: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                >
+                                    {attributes.map((attribute) => (
+                                        <option key={attribute} value={attribute}>
+                                            {attribute}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Ranged or Melee */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Type:</label>
+                                <select
+                                    className="form-select ms-2"
+                                    value={baseAttack.type}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_BASE_ATTACK",
+                                            payload: {
+                                                index,
+                                                updatedBaseAttack: { type: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                >
+                                    <option value="melee">Melee</option>
+                                    <option value="ranged">Ranged</option>
+                                </select>
+                            </div>
+
+                            {/* Element */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Element:</label>
+                                <select
+                                    className="form-select ms-2"
+                                    value={baseAttack.element}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_BASE_ATTACK",
+                                            payload: {
+                                                index,
+                                                updatedBaseAttack: { element: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                >
+                                    <option value="">Select element</option>
+                                    {elements.map((element) => (
+                                        <option key={element} value={element}>
+                                            {element.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Special Effect */}
+                            <div class="form-group me-3">
+                                <label className="form-label">Special Effect</label>
+                                <input
+                                    type="text"
+                                    className="form-control ms-2"
+                                    placeholder="Special Effect"
+                                    value={baseAttack.specialEffect}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_BASE_ATTACK",
+                                            payload: {
+                                                index,
+                                                updatedBaseAttack: { specialEffect: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            <div className="form-group me-3">
+                                <label className="form-label">Cost:</label>
+                                <input
+                                    type="number"
+                                    className="form-control ms-2"
+                                    value={baseAttack.skillCost}
+                                    style={{ width: "60px" }} 
+                                    onChange={(e) => {
+                                        const skillCost = Number(e.target.value);
+                                        dispatch({
+                                            type: "UPDATE_BASE_ATTACK",
+                                            payload: {
+                                                index,
+                                                updatedBaseAttack: { cost:skillCost },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            {/* Extra Damage */}
+                            <div className="form-group me-3">
+                                <label className="form-check-label">
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input ms-2"
+                                        checked={baseAttack.extraDamage}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: "UPDATE_BASE_ATTACK",
+                                                payload: {
+                                                    index,
+                                                    updatedBaseAttack: { extraDamage: e.target.checked },
+                                                },
+                                            });
+                                        }}
+                                    />
+                                    Extra Damage (+5)
+                                </label>
+                            </div>
+
+                            {/* Remove Button */}
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={() => {
+                                    dispatch({ type: "REMOVE_BASE_ATTACK", payload: { index } });
+                                }}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    {/* Add Base Attack Button */}
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => {
+                            dispatch({ type: "ADD_BASE_ATTACK" });
+                        }}
+                    >
+                        Add Base Attack
+                    </button>
+                </div>
+
+
+                {/* End */}
+
+
+
+            </div>
+
+
+
+
         </div>
     );
 

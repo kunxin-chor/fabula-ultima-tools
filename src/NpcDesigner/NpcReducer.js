@@ -26,15 +26,15 @@ function npcReducer(state, action) {
         case "UPDATE_AFFINITY": {
             const { affinity, value } = action.payload;
             const newElementalAffinities = {
-              ...state.elementalAffinities,
-              [affinity]: value,
+                ...state.elementalAffinities,
+                [affinity]: value,
             };
-          
+
             return {
-              ...state,
-              elementalAffinities: newElementalAffinities,
+                ...state,
+                elementalAffinities: newElementalAffinities,
             };
-          }
+        }
 
         case "UPDATE_SPECIES": {
             const selectedSpecies = action.payload.species;
@@ -148,9 +148,136 @@ function npcReducer(state, action) {
                 },
             };
 
+        case 'UPDATE_WEAPON': {
+            return {
+                ...state,
+                selected_weapon: action.payload.weapon,
+            };
+        }
+        case 'UPDATE_SHIELD': {
+            return {
+                ...state,
+                selected_shield: action.payload.shield,
+            };
+        }
+
+
+
+        case "ADD_WEAPON_ATTACK":
+            return {
+                ...state,
+                weaponAttacks: [
+                    ...state.weaponAttacks,
+                    {
+                        weapon: {},
+                        extraDamage: false,
+                        specialEffect: {
+                            description: "",
+                            cost: 0,
+                        },
+                    },
+                ],
+            };
+
+        case "UPDATE_WEAPON_ATTACK_WEAPON":
+            return {
+                ...state,
+                weaponAttacks: state.weaponAttacks.map((weaponAttack, index) =>
+                    index === action.payload.index
+                        ? { ...weaponAttack, weapon: action.payload.weapon }
+                        : weaponAttack
+                ),
+            };
+
+        case "UPDATE_WEAPON_ATTACK_EXTRA_DAMAGE":
+            return {
+                ...state,
+                weaponAttacks: state.weaponAttacks.map((weaponAttack, index) =>
+                    index === action.payload.index
+                        ? { ...weaponAttack, extraDamage: action.payload.extraDamage }
+                        : weaponAttack
+                ),
+            };
+
+        case "UPDATE_WEAPON_ATTACK_SPECIAL_EFFECT_DESCRIPTION":
+            return {
+                ...state,
+                weaponAttacks: state.weaponAttacks.map((weaponAttack, index) =>
+                    index === action.payload.index
+                        ? {
+                            ...weaponAttack,
+                            specialEffect: {
+                                ...weaponAttack.specialEffect,
+                                description: action.payload.description,
+                            },
+                        }
+                        : weaponAttack
+                ),
+            };
+
+        case "UPDATE_WEAPON_ATTACK_SPECIAL_EFFECT_COST":
+            return {
+                ...state,
+                weaponAttacks: state.weaponAttacks.map((weaponAttack, index) =>
+                    index === action.payload.index
+                        ? {
+                            ...weaponAttack,
+                            specialEffect: {
+                                ...weaponAttack.specialEffect,
+                                cost: action.payload.cost,
+                            },
+                        }
+                        : weaponAttack
+                ),
+            };
+
+        case "REMOVE_WEAPON_ATTACK":
+            return {
+                ...state,
+                weaponAttacks: state.weaponAttacks.filter((_, index) => index !== action.payload.index),
+            };
+
+        // ... other cases
+        case "ADD_BASE_ATTACK":
+            return {
+                ...state,
+                baseAttacks: [
+                    ...state.baseAttacks,
+                    {
+                        stat1: "",
+                        stat2: "",
+                        type: "melee",
+                        element: "",
+                        specialEffect: false,
+                        extraDamage: false,
+                    },
+                ],
+            };
+
+        case "REMOVE_BASE_ATTACK":
+            return {
+                ...state,
+                baseAttacks: state.baseAttacks.filter((_, index) => index !== action.payload.index),
+            };
+
+        case "UPDATE_BASE_ATTACK":
+            return {
+                ...state,
+                baseAttacks: state.baseAttacks.map((baseAttack, index) =>
+                    index === action.payload.index
+                        ? { ...baseAttack, ...action.payload.updatedBaseAttack }
+                        : baseAttack
+                ),
+            };
+
+          
+
         default:
             return state;
     }
+
+
+
 }
 
 export default npcReducer;
