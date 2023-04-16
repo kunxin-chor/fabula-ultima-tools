@@ -147,21 +147,30 @@ function npcReducer(state, action) {
                     use_equipment: action.payload.value,
                 },
             };
+        
 
-        case 'UPDATE_WEAPON': {
-            return {
-                ...state,
-                selected_weapon: action.payload.weapon,
-            };
-        }
         case 'UPDATE_SHIELD': {
             return {
                 ...state,
-                selected_shield: action.payload.shield,
+                selected_shield: {
+                    ...state.selected_shield,
+                    [action.payload.key]: action.payload.value,
+                },
             };
         }
 
+        case 'UPDATE_ARMOR': {
+            return {
+                ...state,
+                selected_armor: {       
+                    ...state.selected_armor,
+                    [action.payload.key]: action.payload.value,
 
+                    
+                }
+               
+            };
+        }
 
         case "ADD_WEAPON_ATTACK":
             return {
@@ -169,6 +178,7 @@ function npcReducer(state, action) {
                 weaponAttacks: [
                     ...state.weaponAttacks,
                     {
+                        name: "",
                         weapon: {},
                         extraDamage: false,
                         specialEffect: {
@@ -178,6 +188,17 @@ function npcReducer(state, action) {
                     },
                 ],
             };
+
+        case "UPDATE_WEAPON_ATTACK_NAME":
+            return {
+                ...state,
+                weaponAttacks: state.weaponAttacks.map((weaponAttack, index) =>
+                    index === action.payload.index
+                        ? { ...weaponAttack, name: action.payload.name }
+                        : weaponAttack
+                ),
+            };
+
 
         case "UPDATE_WEAPON_ATTACK_WEAPON":
             return {
@@ -270,7 +291,71 @@ function npcReducer(state, action) {
                 ),
             };
 
-          
+        case "ADD_SPELL":
+            return {
+                ...state,
+                spells: [
+                    ...state.spells,
+                    {
+                        name: "",
+                        targets: 1,
+                        mpCost: 0,
+                        effect: "",
+                        offensive: false,
+                        damage: 0,
+                        element: "",
+                      },
+                ],
+            };
+
+
+        case "UPDATE_SPELL":
+            const updatedSpells = state.spells.map((spell, index) => {
+                if (index === action.payload.index) {
+                    return { ...spell, ...action.payload.updatedSpell };
+                }
+                return spell;
+            });
+
+            return {
+                ...state,
+                spells: updatedSpells,
+            };
+        case "REMOVE_SPELL":
+            const remainingSpells = state.spells.filter(
+                (_, index) => index !== action.payload.index
+            );
+
+            return {
+                ...state,
+                spells: remainingSpells,
+            };
+
+            case "ADD_CUSTOM_RULE":
+                return {
+                    ...state,
+                    customRules: [
+                        ...state.customRules,
+                        {
+                            text: "",
+                            skillCost: 0,
+                        },
+                    ],
+                };
+            case "UPDATE_CUSTOM_RULE":
+                return {
+                    ...state,
+                    customRules: state.customRules.map((rule, index) =>
+                        index === action.payload.index
+                            ? { ...rule, ...action.payload.updatedRule }
+                            : rule
+                    ),
+                };
+            case "REMOVE_CUSTOM_RULE":
+                return {
+                    ...state,
+                    customRules: state.customRules.filter((_, index) => index !== action.payload.index),
+                };    
 
         default:
             return state;

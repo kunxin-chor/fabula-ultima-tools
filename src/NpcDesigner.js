@@ -45,11 +45,6 @@ const initialState = {
     accuracyBonus: 0,
     magicBonus: 0,
     damageBonus: 0,
-    equipment: {
-        weapons: [],
-        armor: {},
-        shield: {}
-    },
     baseSkillPoints: 0,
     freeResistances: 0,
     freeImmunities: 0,
@@ -74,7 +69,19 @@ const initialState = {
         "use_equipment": false,
     },
     weaponAttacks: [],
-    baseAttacks: []
+    baseAttacks: [],
+    spells: [],
+    customRules: [],
+    selected_armor: {
+        armor: {},
+        customQuality: "",
+        skillCost: 0,
+    },
+    selected_shield: {
+        shield: {},
+        customQuality: "",
+        skillCost: 0,
+    },
 };
 
 
@@ -173,8 +180,22 @@ function NpcDesigner() {
             return total;
         }, 0);
 
-        return baseSkillPoints + skillPointsFromLevel + skillPointsFromVulnerabilities - totalElementalCost - totalOtherCost - weaponAttackCost - baseAttackCost;
-    }, [state.freeResistances, state.freeImmunities, state.species]);
+        const customRulesCost = state.customRules.reduce((total, rule) => total + rule.skillCost, 0);
+
+        const equipmentCost = state.selected_armor.skillCost + state.selected_shield.skillCost;
+
+        return (
+            baseSkillPoints +
+            skillPointsFromLevel +
+            skillPointsFromVulnerabilities -
+            totalElementalCost -
+            totalOtherCost -
+            weaponAttackCost -
+            baseAttackCost -
+            customRulesCost -
+            equipmentCost
+        );
+    }, [state.freeResistances, state.freeImmunities, state.species, state.customRules]);
 
     const skillPointsLeft = useMemo(
         () => getSkillPointsLeft(state.level,
@@ -200,18 +221,6 @@ function NpcDesigner() {
         () => getMaxSkillPoints(state.level, state.elementalAffinities, state.baseSkillPoints),
         [state.level, state.elementalAffinities, state.baseSkillPoints]
     );
-
-    function addWeaponAttack() {
-        dispatch({ type: "ADD_WEAPON_ATTACK", payload: { weapon: {}, extraDamage: false, specialEffect: "", specialEffectCost: 0 } });
-    }
-
-    function updateWeaponAttack(index, updatedAttack) {
-        dispatch({ type: "UPDATE_WEAPON_ATTACK", payload: { index, updatedAttack } });
-    }
-
-    function deleteWeaponAttack(index) {
-        dispatch({ type: "DELETE_WEAPON_ATTACK", payload: { index } });
-    }
 
     return (
         <div className="container">
@@ -557,12 +566,15 @@ function NpcDesigner() {
                             className="form-control"
                             id="selected_armor"
                             name="selected_armor"
-                            value={JSON.stringify(state.selected_armor)}
+                            value={JSON.stringify(state.selected_armor.armor)}
                             onChange={(e) => {
                                 const armor = JSON.parse(e.target.value);
                                 dispatch({
                                     type: "UPDATE_ARMOR",
-                                    payload: { armor },
+                                    payload: {
+                                        key: 'armor',
+                                        value: armor,
+                                    }
                                 });
                             }}
                         >
@@ -575,18 +587,46 @@ function NpcDesigner() {
                         </select>
                     </div>
 
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Custom Armor Quality"
+                            value={state.selected_armor.customQuality}
+                            onChange={(e) =>
+                                dispatch({
+                                    type: "UPDATE_ARMOR",
+                                    payload: { key: "customQuality", value: e.target.value },
+                                })
+                            }
+                        />
+                        <input
+                            type="number"
+                            className="form-control mt-2"
+                            placeholder="Custom Armor Skill Cost"
+                            value={state.selected_armor.skillCost}
+                            onChange={(e) =>
+                                dispatch({
+                                    type: "UPDATE_ARMOR",
+                                    payload: { key: "skillCost", value: Number(e.target.value) },
+                                })
+                            }
+                        />
+                    </div>
+
+                    {/* Shield */}
                     <div className="form-group mb-3">
                         <label htmlFor="selected_shield">Shield:</label>
                         <select
                             className="form-control"
                             id="selected_shield"
                             name="selected_shield"
-                            value={JSON.stringify(state.selected_shield)}
+                            value={JSON.stringify(state.selected_shield.shield)}
                             onChange={(e) => {
                                 const shield = JSON.parse(e.target.value);
                                 dispatch({
                                     type: "UPDATE_SHIELD",
-                                    payload: { shield },
+                                    payload: { key: 'shield', value: shield },
                                 });
                             }}
                         >
@@ -598,6 +638,38 @@ function NpcDesigner() {
                             ))}
                         </select>
                     </div>
+
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Custom Shield Quality"
+                            value={state.selected_shield.customQuality}
+                            onChange={(e) =>
+                                dispatch({
+                                    type: "UPDATE_SHIELD",
+                                    payload: {
+                                        key: 'customQuality', value: e.target.value,
+                                     },
+                                })
+                            }
+                        />
+                        <input
+                            type="number"
+                            className="form-control mt-2"
+                            placeholder="Custom Shield Skill Cost"
+                            value={state.selected_shield.skillCost}
+                            onChange={(e) =>
+                                dispatch({
+                                    type: "UPDATE_SHIELD",
+                                    payload: {
+                                        key: 'skillCost', value: Number(e.target.value),
+                                    },
+                                })
+                            }
+                        />
+                    </div>
+
                 </div>
             )}
 
@@ -607,6 +679,19 @@ function NpcDesigner() {
                     <h2 className="my-3">Weapon Attacks</h2>
                     {state.weaponAttacks.map((weaponAttack, index) => (
                         <div key={index} className="d-flex align-items-center mb-2">
+                            <div className="form-group me-3">
+                                <input type="text"
+                                    className="form-control"
+                                    value={weaponAttack.name}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_WEAPON_ATTACK_NAME",
+                                            payload: { index, name: e.target.value },
+                                        });
+                                    }}
+                                />
+                            </div>
+
                             <div className="form-group me-3">
                                 <select
                                     className="form-control"
@@ -839,14 +924,14 @@ function NpcDesigner() {
                                     type="number"
                                     className="form-control ms-2"
                                     value={baseAttack.skillCost}
-                                    style={{ width: "60px" }} 
+                                    style={{ width: "60px" }}
                                     onChange={(e) => {
                                         const skillCost = Number(e.target.value);
                                         dispatch({
                                             type: "UPDATE_BASE_ATTACK",
                                             payload: {
                                                 index,
-                                                updatedBaseAttack: { cost:skillCost },
+                                                updatedBaseAttack: { cost: skillCost },
                                             },
                                         });
                                     }}
@@ -899,14 +984,248 @@ function NpcDesigner() {
                 </div>
 
 
-                {/* End */}
+                {/* Start */}
+                <div className="col-md-12 mb-3">
+                    <h2 className="my-3">Spells</h2>
+                    {state.spells.map((spell, index) => (
+                        <div key={index} className="d-flex align-items-center mb-2">
+                            {/* Name */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Name:</label>
+                                <input
+                                    type="text"
+                                    className="form-control ms-2"
+                                    value={spell.name}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_SPELL",
+                                            payload: {
+                                                index,
+                                                updatedSpell: { name: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            {/* Number of targets */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Targets:</label>
+                                <input
+                                    type="number"
+                                    className="form-control ms-2"
+                                    value={spell.targets}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_SPELL",
+                                            payload: {
+                                                index,
+                                                updatedSpell: { targets: Number(e.target.value) },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            {/* MP cost */}
+                            <div className="form-group me-3">
+                                <label className="form-label">MP Cost:</label>
+                                <input
+                                    type="number"
+                                    className="form-control ms-2"
+                                    value={spell.mpCost}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_SPELL",
+                                            payload: {
+                                                index,
+                                                updatedSpell: { mpCost: Number(e.target.value) },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            {/* Effect */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Effect:</label>
+                                <input
+                                    type="text"
+                                    className="form-control ms-2"
+                                    value={spell.effect}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_SPELL",
+                                            payload: {
+                                                index,
+                                                updatedSpell: { effect: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            {/* Offensive */}
+                            <div className="form-group me-3">
+                                <label className="form-check-label">
+                                    <input
+                                        type="checkbox"
+                                        className="form-check-input ms-2"
+                                        checked={spell.offensive}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: "UPDATE_SPELL",
+                                                payload: {
+                                                    index,
+                                                    updatedSpell: { offensive: e.target.checked },
+                                                },
+                                            });
+                                        }}
+                                    />
+                                    Offensive
+                                </label>
+                            </div>
+
+                            {/* Damage */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Damage:</label>
+                                <input
+                                    type="number"
+                                    className="form-control ms-2"
+                                    value={spell.damage}
+                                    onChange={(e) => {
+                                        const damage = Number(e.target.value);
+                                        dispatch({
+                                            type: "UPDATE_SPELL",
+                                            payload: {
+                                                index,
+                                                updatedSpell: { damage },
+                                            },
+                                        });
+                                    }}
+                                />
+                            </div>
+
+                            {/* Element */}
+                            <div className="form-group me-3">
+                                <label className="form-label">Element:</label>
+                                <select
+                                    className="form-select ms-2"
+                                    value={spell.element}
+                                    onChange={(e) => {
+                                        dispatch({
+                                            type: "UPDATE_SPELL",
+                                            payload: {
+                                                index,
+                                                updatedSpell: { element: e.target.value },
+                                            },
+                                        });
+                                    }}
+                                >
+                                    <option value="">Select element</option>
+                                    {elements.map((element) => (
+                                        <option key={element} value={element}>
+                                            {element.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
 
-
+                            {/* Remove Button */}
+                            <button
+                                type="button"
+                                className="btn btn-danger"
+                                onClick={() => {
+                                    dispatch({ type: "REMOVE_SPELL", payload: { index } });
+                                }}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    {/* Add Spell Button */}
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => {
+                            dispatch({ type: "ADD_SPELL" });
+                        }}
+                    >
+                        Add Spell
+                    </button>
+                </div>
             </div>
 
+            {/* Custom Rules */}
+            <div className="col-md-12 mb-3">
+                <h2 className="my-3">Custom Rules</h2>
+                {state.customRules.map((rule, index) => (
+                    <div key={index} className="d-flex align-items-center mb-2">
+                        {/* Rule Text */}
+                        <div className="form-group me-3">
+                            <label className="form-label">Rule</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                style={{ width: "600px" }}
+                                placeholder="Custom Rule"
+                                value={rule.text}
+                                onChange={(e) => {
+                                    dispatch({
+                                        type: "UPDATE_CUSTOM_RULE",
+                                        payload: {
+                                            index,
+                                            updatedRule: { text: e.target.value },
+                                        },
+                                    });
+                                }}
+                            />
+                        </div>
 
+                        {/* Rule Skill Cost */}
+                        <div className="form-group me-3">
+                            <label className="form-label">Skill Cost:</label>
+                            <input
+                                type="number"
+                                className="form-control ms-2"
+                                value={rule.skillCost}
+                                onChange={(e) => {
+                                    const skillCost = Number(e.target.value);
+                                    dispatch({
+                                        type: "UPDATE_CUSTOM_RULE",
+                                        payload: {
+                                            index,
+                                            updatedRule: { skillCost },
+                                        },
+                                    });
+                                }}
+                            />
+                        </div>
 
+                        {/* Remove Button */}
+                        <button
+                            type="button"
+                            className="btn btn-danger mt-4"
+                            onClick={() => {
+                                dispatch({ type: "REMOVE_CUSTOM_RULE", payload: { index } });
+                            }}
+                        >
+                            Remove
+                        </button>
+                    </div>
+                ))}
+                {/* Add Custom Rule Button */}
+                <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={() => {
+                        dispatch({ type: "ADD_CUSTOM_RULE" });
+                    }}
+                >
+                    Add Custom Rule
+                </button>
+            </div>
 
         </div>
     );
