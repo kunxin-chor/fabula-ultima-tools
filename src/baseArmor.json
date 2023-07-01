@@ -28,7 +28,7 @@
   },
   {
     "name": "Ironwood Armor",
-    "martial": true,
+    "martial": false,
     "defense": "[DEX]+1",
     "magicDefense": "[INS]+2",
     "cost": 150,
@@ -110,8 +110,8 @@
   {
     "name": "Spellwood Shield",
     "martial": false,
-    "defense": "+1",
-    "magicDefense": "0",
+    "defense": "0",
+    "magicDefense": "+1",
     "initiative": "0",
     "quality": "",
     "cost": 50

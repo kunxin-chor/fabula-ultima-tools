@@ -1,8 +1,24 @@
 import spieces from "./species.json"
 
+
 // Create a reducer function to handle state updates
 function npcReducer(state, action) {
     switch (action.type) {
+
+        case "SET_FROM_JSON":
+            
+            return {
+                ...state,
+                ...action.payload,
+            };
+
+        case "LOAD_CHARACTER": {
+            const savedState = action.payload;
+            return {
+                ...state,
+                ...savedState,
+            };
+        }
 
         case "UPDATE_FIELD": {
             return {
@@ -42,9 +58,8 @@ function npcReducer(state, action) {
 
             // Merge elemental affinities with the current state
             const elementalAffinities = {
-                ...state.elementalAffinities,
                 ...speciesData.elementalAffinities,
-            };
+            }
 
             return {
                 ...state,
@@ -125,6 +140,19 @@ function npcReducer(state, action) {
                     improved_hit_points: value,
                 },
             };
+  
+        }
+
+        case "UPDATE_IMPROVED_MP": {
+            const { value } = action.payload;
+            return {
+                ...state,
+                skillOptions: {
+                    ...state.skillOptions,
+                    improved_mp: value,
+                }
+            }
+     
         }
 
         case "UPDATE_IMPROVED_INITIATIVE": {
@@ -265,12 +293,14 @@ function npcReducer(state, action) {
                 baseAttacks: [
                     ...state.baseAttacks,
                     {
+                        name:"",
                         stat1: "",
                         stat2: "",
                         type: "melee",
-                        element: "",
-                        specialEffect: false,
+                        element: "physical",                     
+                        specialEffect: "",
                         extraDamage: false,
+                        skillCost: 0
                     },
                 ],
             };
@@ -299,8 +329,11 @@ function npcReducer(state, action) {
                     {
                         name: "",
                         targets: 1,
+                        stat1:"INS",
+                        stat2:"WLP",
                         mpCost: 0,
                         effect: "",
+                        type:"others",
                         offensive: false,
                         damage: 0,
                         element: "",
@@ -337,6 +370,7 @@ function npcReducer(state, action) {
                     customRules: [
                         ...state.customRules,
                         {
+                            name:"",
                             text: "",
                             skillCost: 0,
                         },

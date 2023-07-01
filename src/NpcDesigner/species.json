@@ -31,7 +31,9 @@
       "earth": "resistant",
       "poisoned": "immune"
     },
-    "customActions": []
+    "customActions": [],
+    "freeResistances": 1,
+    "freeImmunities": 2
   },
   "demon": {
     "name": "Demon",
@@ -66,7 +68,7 @@
       "poisoned": "immune"
     },
     "customActions": [],
-    "freeImmunities": 1
+    "freeImmunities": 3
   },
   "humanoid": {
     "name": "Humanoid",
@@ -115,7 +117,8 @@
       "shaken": "immune",
       "enraged": "immune"
     },
-    "customActions": []
+    "customActions": [],
+    "freeImmunities": 3
   },
   "undead": {
     "name": "Undead",
@@ -136,6 +139,8 @@
       "poisoned": "immune",
       "light": "vulnerable"
     },
-    "customActions": []
+    "customActions": [],
+    "freeImmunities": 3
+
   }
 }
